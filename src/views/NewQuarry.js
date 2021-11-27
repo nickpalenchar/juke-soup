@@ -1,24 +1,23 @@
 import {Form} from 'react-bootstrap';
-import { collection, addDoc } from "firebase/firestore";
+import {collection, addDoc} from "firebase/firestore";
+import User from '../models/User';
+
 
 import getDatabase from "../database/getDatabase";
 
 export default function NewQuarry(props) {
 
-  const db = getDatabase();
-  console.log('hello/???', collection(db, "users"));
-    const docRef = addDoc(collection(db, "users"), {
-      first: "Ada",
-      last: "Lovelace",
-      born: 1815
-    }).then(console.log).catch(console.error);
+  User.findOne({
+    first: 'Ada',
+    born: 2053
+  }).then(console.log);
 
-    return (
-        <>
-            <h1>Open a Quarry. Discover Music.</h1>
-            <Form>
-                <Form.Group controlId='test'/>
-            </Form>
-        </>
-    )
+  return (
+    <>
+      <h1>Open a Quarry. Discover Music.</h1>
+      <Form>
+        <Form.Group controlId='test'/>
+      </Form>
+    </>
+  )
 }

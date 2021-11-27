@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import {Routes, Route, Link} from "react-router-dom";
 import './App.css';
 import {initializeApp} from "firebase/app";
+import { ORM } from './models/orm';
 
 import getDatabase from './database/getDatabase'
 import SelectAQuarry from "./views/SelectAQuarry";
@@ -19,9 +20,7 @@ function App() {
     appId: "1:616247216727:web:951437741a8d7445b3f112"
 
   });
-
-  const dbConnection = getDatabase();
-  console.log('app ', dbConnection);
+  const db = getDatabase();
 
   return (
     <div className="App">
