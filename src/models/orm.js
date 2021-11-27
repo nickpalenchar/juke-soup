@@ -84,7 +84,7 @@ class Model {
    * @param {object} queryObj - simplified AND'ed obect or sql like string
    * @returns {Promise<void>}
    */
-  async findOne(queryObj) {
+  async find(queryObj) {
     let _id;
     if (queryObj._id) {
       _id = queryObj._id;
@@ -99,10 +99,16 @@ class Model {
     }
     if (_id) {
       const doc = find(snapshot.docs, (doc) => doc.id === _id);
-      return documentSnapshotToObject(doc);
+      return [documentSnapshotToObject(doc)];
     }
-    return documentSnapshotToObject(snapshot.docs[0])
-    // return {...snapshot.docs[0].data(), _id: snapshot.docs[0].id};
+    return snapshot.docs.map(documentSnapshotToObject);
+  }
+  async findOne(queryObj) {
+    const docs = await this.find(queryObj);
+    if (!docs) {
+      return;
+    }
+    return docs[0];
   }
 
   async findById(id, { cache = true} = {}) {
