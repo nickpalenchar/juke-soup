@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import {Form, InputGroup, Button, FormControl} from 'react-bootstrap';
 import { FiRefreshCw } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom';
 import Loading from "../components/Loading";
 import useUser from '../auth/identity';
 import {MobilishView} from "../components/MobilishView";
 import twoWordPhrase from '../util/searchPhrase';
-
-
+import Quarry from "../models/Quarry";
 
 export default function NewQuarry(props) {
 
+  const navigate = useNavigate();
   const user = useUser();
 
   const [phrase, setPhrase] = useState(twoWordPhrase());
@@ -23,8 +24,6 @@ export default function NewQuarry(props) {
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;
-    console.log(form)
-    console.log(form.checkValidity())
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
@@ -37,6 +36,17 @@ export default function NewQuarry(props) {
       return;
     }
     setSubmitting(true);
+
+    // TODO probably re-validate user exists before creating
+    Quarry.create({
+      leader: user,
+      phrase: phrase.join('-')
+    })
+      .then(data => {
+        console.log('new quarry', data);
+        navigate(`/quarry/${data._id}`);
+      })
+
   }
 
   if (user === null) {

@@ -51,11 +51,17 @@ class Model {
       if (key === '_id') {
         continue;
       }
+      console.log(key, this._schema[key]);
       if (!this._schema[key]) {
         throw Error(`document has extra property '${key}'
         Schema keys are ${Object.keys(this._schema).join(', ')}`);
       }
-      if (typeof this._schema[key]() !== typeof value) {
+      if (Array.isArray(this._schema[key])) {
+        // TODO: validate the type inside the array schema with items in the document array
+        if (!Array.isArray(value)) {
+          throw Error(`Expected ${key} to be an Array but was ${typeof value}`);
+        }
+      } else if (typeof this._schema[key]() !== typeof value) {
         throw Error(`Expected '${key}' to be type ${typeof this._schema[key]()}, but was ${typeof value}
         Schema keys are ${Object.keys(this._schema).join(', ')}`);
       }
