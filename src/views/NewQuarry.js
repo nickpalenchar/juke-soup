@@ -7,9 +7,9 @@ import getDatabase from "../database/getDatabase";
 
 export default function NewQuarry(props) {
 
-  User.findOne({
-    first: 'Ada',
-    born: 2053
+  User.create({
+    score: 0,
+    displayName: 'Nick'
   }).then(console.log);
 
   return (

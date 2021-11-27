@@ -29,6 +29,14 @@ class Model {
     this._schema = schema;
     this._collection = name;
     this._getdb = getdbFn;
+    this._hooks = {
+      preCreate: () => {},
+    }
+  }
+
+  // hooks
+  preCreate(hook) {
+    this._hooks.preCreate = hook;
   }
 
   /**
@@ -39,24 +47,23 @@ class Model {
   validate(document) {
     const schemaEntries = Object.entries(this._schema);
     const documentEntries = Object.entries(document);
-    if (schemaEntries.length !== documentEntries.length) {
-      throw Error('document does not match schema');
-    }
     for (const [key, value] of documentEntries) {
       if (!this._schema[key]) {
-        throw Error(`document has extra property '${key}'`);
+        throw Error(`document has extra property '${key}'
+        Schema keys are ${Object.keys(this._schema).join(', ')}`);
       }
       if (typeof this._schema[key]() !== typeof value) {
-        throw Error(`Expected '${key}' to be type ${typeof this._schema[key]}, but was ${typeof value}`);
+        throw Error(`Expected '${key}' to be type ${typeof this._schema[key]()}, but was ${typeof value}
+        Schema keys are ${Object.keys(this._schema).join(', ')}`);
       }
     }
     return document;
   }
 
   async create(document) {
+    this._hooks.preCreate(document);
     this.validate(document);
     const db = this._getdb();
-    console.log('adding colleccion',)
     return addDoc(collection(db, this._collection), document);
   }
 
@@ -83,7 +90,6 @@ class Model {
 function convertObjectToWhereClauses(obj) {
   const clauses = [];
   for (const [key, value] of Object.entries(obj)) {
-    console.log('pushing ', key, value)
     clauses.push(where(key, '==', value));
   }
   return clauses;
