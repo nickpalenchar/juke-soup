@@ -3,12 +3,13 @@ import '../style/button.css'
 import { useNavigate } from "react-router-dom";
 
 import useUser from "../auth/identity";
+import Loading from "../components/Loading";
 
 function SelectAQuarry(props) {
     const navigate = useNavigate();
     const user = useUser();
     if (user === null) {
-      return <div>loading.</div>
+      return <Loading/>
     }
     return (
         <>

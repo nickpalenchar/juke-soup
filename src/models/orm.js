@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, getDoc, doc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, getDoc, getDocFromServer, doc } from "firebase/firestore";
 import find from 'lodash.find';
 import getDatabase from '../database/getDatabase';
 
@@ -70,7 +70,7 @@ class Model {
     const db = this._getdb();
     const snapshot = await addDoc(collection(db, this._collection), document);
     if (fetchDoc) {
-      return this.findById(snapshot.id);
+      return this.findById(snapshot.id, {cache: false});
     }
     return snapshot;
   }
@@ -100,10 +100,11 @@ class Model {
     // return {...snapshot.docs[0].data(), _id: snapshot.docs[0].id};
   }
 
-  async findById(id) {
+  async findById(id, { cache = true} = {}) {
+    console.log('cache?? ', cache);
     const db = this._getdb();
     const docRef = doc(db, `/${this._collection}/${id}`);
-    const snapshot = await getDoc(docRef);
+    const snapshot = await (cache ? getDoc(docRef) : getDocFromServer(docRef));
     return documentSnapshotToObject(snapshot);
   }
 

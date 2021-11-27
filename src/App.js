@@ -26,8 +26,8 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={SelectAQuarry()}/>
-        <Route path="/quarry/new" element={NewQuarry()}/>
+        <Route path="/" element={<SelectAQuarry/>}/>
+        <Route path="/quarry/new" element={<NewQuarry/>}/>
         <Route path="/quarry/:id" element={<div>A quarry</div>}/>
       </Routes>
     </div>

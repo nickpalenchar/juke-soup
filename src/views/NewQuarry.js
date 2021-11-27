@@ -1,6 +1,7 @@
 import {Form} from 'react-bootstrap';
 import {collection, addDoc} from "firebase/firestore";
 import User from '../models/User';
+import Loading from "../components/Loading";
 import useUser from '../auth/identity';
 
 
@@ -10,7 +11,7 @@ export default function NewQuarry(props) {
   const user = useUser();
 
   if (user === null) {
-    return <div>Loading...</div>
+    return <Loading/>
   }
 
   return (
