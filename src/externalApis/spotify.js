@@ -4,7 +4,6 @@ import {SPOTIFY_ACCOUNTS_API, SPOTIFY_API, SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_U
 const ACCESS_TOKEN = 'spotifyAccessToken_DO_NOT_SHARE';
 const REFRESH_TOKEN = 'spotifyRefreshToken';
 
-
 class Storage {
   get accessToken() {
     return localStorage.getItem(ACCESS_TOKEN);

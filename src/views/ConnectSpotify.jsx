@@ -1,12 +1,14 @@
 import {APP_NAME} from '../constants';
 import {Button} from 'react-bootstrap';
 import {SPOTIFY_ACCOUNTS_API, SPOTIFY_CLIENT_ID, SPOTIFY_API, SPOTIFY_REDIRECT_URI} from '../constants';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import pkceChallenge from 'pkce-challenge';
 import axios from "axios";
 
 import spotify from '../externalApis/spotify';
+import Loading from "../components/Loading";
 
+const CODE_VERIFIER = 'codeVerifier_DO_NOT_SHARE'
 const { code_verifier, code_challenge } = pkceChallenge(48);
 
 const authParams = new URLSearchParams();
@@ -23,6 +25,7 @@ const AUTH_URL = `${SPOTIFY_ACCOUNTS_API}/authorize?${authParams.toString()}`;
 export default function ConnectSpotify() {
 
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
@@ -38,19 +41,19 @@ export default function ConnectSpotify() {
   }
 
   if (code) {
-    const code_verifier = localStorage.getItem('codeVerifier_DO_NOT_SHARE');
+    const code_verifier = localStorage.getItem(CODE_VERIFIER);
 
     spotify.setTokensWithCode(code, code_verifier)
       .then(data => {
         console.log(data);
         return spotify.axios('/me/player/currently-playing')
       })
-      .then(console.log)
+      .then(() => navigate('/quarry/new'))
       .catch((e) => console.error(e.message))
-    return <div>got a code {code}</div>
+    return <Loading/>
   }
 
-  localStorage.setItem('codeVerifier_DO_NOT_SHARE', code_verifier);
+  localStorage.setItem(CODE_VERIFIER, code_verifier);
 
   return <>
     <h1>Connect Your Spotify Account</h1>

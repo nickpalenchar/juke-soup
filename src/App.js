@@ -6,6 +6,10 @@ import SelectAQuarry from "./views/SelectAQuarry";
 import NewQuarry from "./views/NewQuarry";
 import ConnectSpotify from "./views/ConnectSpotify";
 
+const style = {
+  'display': 'flex',
+  justifyContent: 'center'
+}
 
 function App() {
 
@@ -20,7 +24,7 @@ function App() {
 
 
   return (
-    <div className="App">
+    <div className="App" style={style}>
       <Routes>
         <Route path="/" element={<SelectAQuarry/>}/>
         <Route path="/spotifyConnect" element={<ConnectSpotify/>}/>
