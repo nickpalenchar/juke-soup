@@ -2,7 +2,7 @@ import { ORM } from './orm';
 import { v4 as uuidv4 } from 'uuid';
 
 const UserSchema = {
-  money: String,
+  money: Number,
   score: Number,
   id: String,
   displayName: String

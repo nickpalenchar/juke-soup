@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import getDatabase from '../database/getDatabase';
 
 export class ORM {
@@ -60,11 +60,15 @@ class Model {
     return document;
   }
 
-  async create(document) {
+  async create(document, {fetchDoc = true} = {}) {
     this._hooks.preCreate(document);
     this.validate(document);
     const db = this._getdb();
-    return addDoc(collection(db, this._collection), document);
+    const snapshot = await addDoc(collection(db, this._collection), document);
+    if (fetchDoc) {
+      return this.findById(snapshot.id);
+    }
+    return snapshot;
   }
 
   /**
@@ -79,7 +83,23 @@ class Model {
     if (!snapshot.docs?.length) {
       return undefined;
     }
-    return snapshot.docs[0].data();
+    return documentSnapshotToObject(snapshot.docs[0])
+    // return {...snapshot.docs[0].data(), _id: snapshot.docs[0].id};
+  }
+
+  async findById(id) {
+    const db = this._getdb();
+    const docRef = doc(db, `/${this._collection}/${id}`);
+    const snapshot = await getDoc(docRef);
+    return documentSnapshotToObject(snapshot);
+  }
+
+  async findOrCreate(queryObj) {
+    const doc = await this.findOne(queryObj);
+    if (!doc) {
+      return this.create(queryObj);
+    }
+    return documentSnapshotToObject(doc)
   }
 }
 
@@ -93,4 +113,16 @@ function convertObjectToWhereClauses(obj) {
     clauses.push(where(key, '==', value));
   }
   return clauses;
+}
+
+/** takes a DocumentSnapshot https://firebase.google.com/docs/reference/js/firestore_lite.documentsnapshot.md
+ * and adds the id to the document as _id (like with mongoose)
+ * @param snapshot
+ */
+function documentSnapshotToObject(snapshot) {
+  const data = snapshot?.data();
+  if (!data) {
+    return;
+  }
+  return { ...snapshot.data(), _id: snapshot.id };
 }
