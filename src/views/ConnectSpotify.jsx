@@ -1,16 +1,13 @@
 import {APP_NAME} from '../constants';
 import {Button} from 'react-bootstrap';
-import {SPOTIFY_ACCOUNTS_API, SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI} from '../constants';
+import {SPOTIFY_ACCOUNTS_API, SPOTIFY_CLIENT_ID, SPOTIFY_API, SPOTIFY_REDIRECT_URI} from '../constants';
 import {useLocation} from 'react-router-dom';
-import crypto from 'crypto';
 import pkceChallenge from 'pkce-challenge';
 import axios from "axios";
 
+import spotify from '../externalApis/spotify';
+
 const { code_verifier, code_challenge } = pkceChallenge(48);
-
-const CODE_VERIFIER = 'correc-horse-battery-stapler-xkcd-ftw';
-const CODE_CHALLENGE = crypto.createHash('sha256').update(CODE_VERIFIER).digest().toString();
-
 
 const authParams = new URLSearchParams();
 authParams.append('client_id', SPOTIFY_CLIENT_ID);
@@ -41,24 +38,13 @@ export default function ConnectSpotify() {
   }
 
   if (code) {
-    const ACCESS_TOKEN_URL = `${SPOTIFY_ACCOUNTS_API}/api/token`;
     const code_verifier = localStorage.getItem('codeVerifier_DO_NOT_SHARE');
-    const params = new URLSearchParams();
-    console.log('retrieved verification code ', code_verifier);
-    params.append('grant_type', 'authorization_code');
-    params.append('code', code);
-    params.append('redirect_uri', SPOTIFY_REDIRECT_URI);
-    params.append('client_id', SPOTIFY_CLIENT_ID);
-    params.append('code_verifier', code_verifier);
 
-    axios({
-      method: 'post',
-      url: ACCESS_TOKEN_URL,
-      data: params,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
+    spotify.setTokensWithCode(code, code_verifier)
+      .then(data => {
+        console.log(data);
+        return spotify.axios('/me/player/currently-playing')
+      })
       .then(console.log)
       .catch((e) => console.error(e.message))
     return <div>got a code {code}</div>
