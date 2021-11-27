@@ -1,7 +1,7 @@
 import {getFirestore} from "firebase/firestore";
 
 if (process.NODE_ENV === 'development') {
-  const db = getFirestore();
+  // const db = getFirestore();
 }
 
 let db;

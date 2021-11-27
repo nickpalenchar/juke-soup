@@ -1,14 +1,10 @@
-import logo from './logo.svg';
-import {Routes, Route, Link} from "react-router-dom";
+import {Routes, Route } from "react-router-dom";
 import './App.css';
-import {useState, useEffect} from 'react';
 import {initializeApp} from "firebase/app";
-import { ORM } from './models/orm';
 
-import getDatabase from './database/getDatabase'
 import SelectAQuarry from "./views/SelectAQuarry";
 import NewQuarry from "./views/NewQuarry";
-import {connectFirestoreEmulator, getFirestore} from "firebase/firestore";
+import ConnectSpotify from "./views/ConnectSpotify";
 
 
 function App() {
@@ -27,6 +23,8 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<SelectAQuarry/>}/>
+        <Route path="/spotifyConnect" element={<ConnectSpotify/>}/>
+        <Route path="/callback" element={<ConnectSpotify/>}/>
         <Route path="/quarry/new" element={<NewQuarry/>}/>
         <Route path="/quarry/:id" element={<div>A quarry</div>}/>
       </Routes>

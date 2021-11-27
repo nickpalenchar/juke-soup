@@ -46,7 +46,6 @@ class Model {
    * @returns {*}
    */
   validate(document) {
-    const schemaEntries = Object.entries(this._schema);
     const documentEntries = Object.entries(document);
     for (const [key, value] of documentEntries) {
       if (key === '_id') {

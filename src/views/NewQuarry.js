@@ -1,6 +1,4 @@
 import {Form} from 'react-bootstrap';
-import {collection, addDoc} from "firebase/firestore";
-import User from '../models/User';
 import Loading from "../components/Loading";
 import useUser from '../auth/identity';
 
@@ -18,7 +16,9 @@ export default function NewQuarry(props) {
     <>
       <h1>Open a Quarry. Discover Music.</h1>
       <Form>
-        <Form.Group controlId='test'/>
+        <Form.Group controlId='name'>
+          <Form.Label></Form.Label>
+        </Form.Group>
       </Form>
     </>
   )

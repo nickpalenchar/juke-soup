@@ -6,6 +6,7 @@ import App from "./App";
 import getDatabase from "./database/getDatabase";
 import {connectFirestoreEmulator} from "firebase/firestore";
 import {initializeApp} from "firebase/app";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 initializeApp({
   apiKey: 'AIzaSyDQfAAJqtKOKXEdRL1SfqS3Pj8VjAIqvzE',
