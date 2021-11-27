@@ -1,10 +1,15 @@
 import '../style/input.css';
 import '../style/button.css'
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import useUser from "../auth/identity";
 
 function SelectAQuarry(props) {
     const navigate = useNavigate();
-
+    const user = useUser();
+    if (user === null) {
+      return <div>loading.</div>
+    }
     return (
         <>
             <h1>Find a Quarry</h1>

@@ -1,4 +1,5 @@
 import { collection, addDoc, query, where, getDocs, getDoc, doc } from "firebase/firestore";
+import find from 'lodash.find';
 import getDatabase from '../database/getDatabase';
 
 export class ORM {
@@ -48,6 +49,9 @@ class Model {
     const schemaEntries = Object.entries(this._schema);
     const documentEntries = Object.entries(document);
     for (const [key, value] of documentEntries) {
+      if (key === '_id') {
+        continue;
+      }
       if (!this._schema[key]) {
         throw Error(`document has extra property '${key}'
         Schema keys are ${Object.keys(this._schema).join(', ')}`);
@@ -60,7 +64,7 @@ class Model {
     return document;
   }
 
-  async create(document, {fetchDoc = true} = {}) {
+  async create(document = {}, {fetchDoc = true} = {}) {
     this._hooks.preCreate(document);
     this.validate(document);
     const db = this._getdb();
@@ -76,12 +80,21 @@ class Model {
    * @returns {Promise<void>}
    */
   async findOne(queryObj) {
+    let _id;
+    if (queryObj._id) {
+      _id = queryObj._id;
+      delete queryObj._id;
+    }
     const db = this._getdb();
     const ref = collection(db, this._collection);
     const q = query(ref, ...convertObjectToWhereClauses(queryObj));
     const snapshot = await getDocs(q);
     if (!snapshot.docs?.length) {
       return undefined;
+    }
+    if (_id) {
+      const doc = find(snapshot.docs, (doc) => doc.id === _id);
+      return documentSnapshotToObject(doc);
     }
     return documentSnapshotToObject(snapshot.docs[0])
     // return {...snapshot.docs[0].data(), _id: snapshot.docs[0].id};
@@ -97,9 +110,12 @@ class Model {
   async findOrCreate(queryObj) {
     const doc = await this.findOne(queryObj);
     if (!doc) {
+      if (!queryObj._id) {
+        delete queryObj._id;
+      }
       return this.create(queryObj);
     }
-    return documentSnapshotToObject(doc)
+    return doc;
   }
 }
 

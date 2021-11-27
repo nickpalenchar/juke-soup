@@ -5,18 +5,27 @@ export default function useUser() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const id = localStorage.getItem('id');
-    if (id) {
+    console.log(1)
+    const _id = localStorage.getItem('_id');
+    if (!_id) {
+      return User.create()
+        .then(user => {
+          console.log('new user', user);
+          localStorage.setItem('_id', '123');
+          setUser(user);
+        })
       return;
     }
-    User.findOrCreate({id})
+    if (_id === '999') {
+      console.log('DONE ');
+      setUser({hello: 'wourld'});
+    }
+    User.findOrCreate({_id})
       .then(user => {
-        if (user) {
-          console.log('USER?? ', user);
-          localStorage.setItem('id', user.id);
-          setUser(user);
-        }
-      });
+        console.log('new user coul ald not fourd', user);
+        localStorage.setItem('_id', '999');
+      })
+    setUser(_id);
   });
 
   return user;
