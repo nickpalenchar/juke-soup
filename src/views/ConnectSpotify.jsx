@@ -7,6 +7,7 @@ import axios from "axios";
 
 import spotify from '../externalApis/spotify';
 import Loading from "../components/Loading";
+import {MobilishView} from "../components/MobilishView";
 
 const CODE_VERIFIER = 'codeVerifier_DO_NOT_SHARE'
 const { code_verifier, code_challenge } = pkceChallenge(48);
@@ -55,7 +56,7 @@ export default function ConnectSpotify() {
 
   localStorage.setItem(CODE_VERIFIER, code_verifier);
 
-  return <>
+  return <MobilishView align='center'>
     <h1>Connect Your Spotify Account</h1>
     <p>Let {APP_NAME} control your music player on Spotify. Connect an account you plan on playing loud and
       proud.</p>
@@ -65,5 +66,5 @@ export default function ConnectSpotify() {
     <br/>
     <br/>
     <small>We don't modify any data, such as playlists or liked songs (or anything else)</small>
-  </>
+  </MobilishView>
 }

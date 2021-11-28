@@ -40,13 +40,13 @@ export default function NewQuarry(props) {
     // TODO probably re-validate user exists before creating
     Quarry.create({
       leader: user,
-      phrase: phrase.join('-')
+      phrase: phrase.join('-'),
+      name: quarryName
     })
       .then(data => {
         console.log('new quarry', data);
         navigate(`/quarry/${data._id}`);
       })
-
   }
 
   if (user === null) {

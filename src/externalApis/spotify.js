@@ -72,8 +72,32 @@ class AxiosWithSpotifyAuth {
     try {
       res = await this.axios(...args);
     } catch (e) {
-      console.error(e);
+      console.dir(e)
+      if (e.response?.data.error.message === "The access token expired") {
+        await this.requestAccessTokenFromRefreshToken();
+        return this.request(...args);
+      }
     }
+    return res;
+  }
+
+  async requestAccessTokenFromRefreshToken() {
+    console.log('starting refresh flow')
+    const params = new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: storage.refreshToken,
+      client_id: SPOTIFY_CLIENT_ID,
+    });
+    const res = await axios({
+      url: `${SPOTIFY_ACCOUNTS_API}/api/token`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: params
+    });
+    storage.accessToken = res.data.access_token;
+    storage.refreshToken = res.data.refresh_token;
     return res;
   }
 }

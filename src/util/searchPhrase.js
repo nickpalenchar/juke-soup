@@ -32,7 +32,9 @@ const SHORT_ADJECTIVES = [
   'solid',
   'liquid',
   'meta',
-  'cyber'
+  'cyber',
+  'swanky',
+  'fruity'
 ];
 
 const SHORT_NOUNS = [
@@ -78,8 +80,7 @@ const SHORT_NOUNS = [
   'bread',
   'box',
   'toy',
-  'swanky',
-  'fruity'
+  'tea'
 ]
 
 export default function twoWordPhrase() {

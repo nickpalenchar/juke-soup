@@ -2,6 +2,7 @@ import { ORM } from './orm';
 
 const QuarrySchema = {
   leader: String,
+  name: String,
   queue: [],
   phrase: String,
   created: Object // Date TODO date validation?

@@ -5925,6 +5925,11 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
+goodtimer@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/goodtimer/-/goodtimer-3.4.0.tgz#26225b877e500445f50c0bad0b799dbb7b1962f7"
+  integrity sha512-rmXYMPPxK2lkgYQGnzFPakaRbAobaYexMkIA7lACRTEaEAelNEt9QeULEPR0acgZfrR5ePcVXE1rtmkijXA49Q==
+
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4:
   version "4.2.6"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.6.tgz#ff040b2b0853b23c3d31027523706f1885d76bee"

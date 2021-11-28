@@ -112,7 +112,6 @@ class Model {
   }
 
   async findById(id, { cache = true} = {}) {
-    console.log('cache?? ', cache);
     const db = this._getdb();
     const docRef = doc(db, `/${this._collection}/${id}`);
     const snapshot = await (cache ? getDoc(docRef) : getDocFromServer(docRef));
