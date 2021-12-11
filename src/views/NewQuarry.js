@@ -59,7 +59,7 @@ export default function NewQuarry(props) {
       <Form noValidate validated={validated} onSubmit={handleSubmit} action=''>
         <Form.Group controlId='name'>
           <Form.Label>Quarry Name</Form.Label>
-          <Form.Control required type="input" placeholder="(e.g. Nick's Place)" value={quarryName} onChange={updateQuarryName}/>
+          <Form.Control required type="input" placeholder="(e.g. Nick's Soup)" value={quarryName} onChange={updateQuarryName}/>
         </Form.Group>
         <br/>
         <InputGroup style={{width: '480px'}}>

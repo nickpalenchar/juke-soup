@@ -2,14 +2,14 @@ import spotify from '../externalApis/spotify';
 import {IoFlameSharp} from 'react-icons/io5';
 import useUser from '../auth/identity'
 import User from '../models/User';
+import Quarry from '../models/Quarry';
 import {MONEY_PLURAL} from '../constants';
 import {FormControl, InputGroup, Button, Badge, ListGroup} from "react-bootstrap";
 import {useState} from "react";
 import {Time} from 'goodtimer';
 import ConfirmSongSelection from "./ConfirmSongSelection";
 
-
-export default function SongSelector({eventHandler = () => {}} = {}) {
+export default function SongSelector({soupId, eventHandler = () => {}} = {}) {
 
   const [query, setQuery] = useState('');
   const [tracks, setTracks] = useState([]);
@@ -59,6 +59,12 @@ export default function SongSelector({eventHandler = () => {}} = {}) {
               eventHandler('selectedTrack', selectedTrack);
               return user;
             })
+        })
+        .then(() => Quarry.findById(soupId))
+        .then(soup => {
+          console.log('got soup ', soup);
+          const updateQueue = [{votes: 5, track: selectedTrack}, ...soup.queue];
+          return Quarry.update({_id: soup._id}, {queue: updateQueue})
         })
         .catch(e => {
           if (e.message.toLowerCase() === 'silent') {

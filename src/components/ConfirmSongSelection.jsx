@@ -1,5 +1,5 @@
 import {Modal, Button, Badge} from "react-bootstrap";
-import {FaRegGem} from 'react-icons/fa';
+import {FaTicketAlt} from 'react-icons/fa';
 import {MONEY_SINGULAR} from '../constants'
 import TrackPreview from "./TrackPreview";
 
@@ -20,7 +20,7 @@ export default function ConfirmSongSelection({show, track, handler}) {
         Close
       </Button>
       <Button variant="dark" onClick={() => handler(true)}>
-        Submit&nbsp; <Badge bg='primary' pill>-1 <FaRegGem/></Badge>
+        Submit&nbsp; <Badge bg='primary' pill>-1 <FaTicketAlt/></Badge>
       </Button>
     </Modal.Footer>
   </Modal>

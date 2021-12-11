@@ -1,8 +1,7 @@
 import {AiOutlinePlusCircle} from 'react-icons/ai';
-import {FaMusic} from 'react-icons/fa'
+import {FaMusic, FaTicketAlt} from 'react-icons/fa'
 import {useState, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
-import { MONEY_PLURAL } from '../constants';
 import { startMoneyLoop, stopMoneyLoop } from '../routines/moneyReplenish';
 import Loading from "../components/Loading";
 import QuarryModel from '../models/Quarry';
@@ -68,13 +67,13 @@ export default function Quarry() {
       <p><a href='/'>Just go away</a></p>
     </MobilishView>)
   }
-
   if (quarry === null) {
     return <Loading/>
   }
+  const userMoneyStat = <><FaTicketAlt/> {user?.money}</>;
   return <MobilishView align='left'>
     <section>
-      <h2>{quarry.name} | { typeof user?.money === 'number' && `${MONEY_PLURAL}: ${user.money}`} </h2>
+      <h2>{quarry.name} </h2><h4>{ typeof user?.money === 'number' ? userMoneyStat : ' '}</h4>
     </section>
     <QuarrySharing phrase={quarry.phrase}/>
     <br/>
@@ -83,7 +82,7 @@ export default function Quarry() {
         <SongQueue songs={quarry.queue}/>
       </Tab>
       <Tab eventKey="new" title={<><AiOutlinePlusCircle/> New </>}>
-        <SongSelector eventHandler={songSelectorEvent}/>
+        <SongSelector eventHandler={songSelectorEvent} soupId={quarryId}/>
       </Tab>
     </Tabs>
   </MobilishView>
