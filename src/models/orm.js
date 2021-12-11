@@ -183,7 +183,12 @@ class Model {
     const db = this._getdb();
     const docRef = doc(db, `/${this._collection}/${document._id}`);
     debug.groupEnd();
-    return updateDoc(docRef, 'money', 12);
+    let updates = [];
+    for (const [key, value] of Object.entries(updateObj)) {
+      const update = await updateDoc(docRef, key, value);
+      updates.push(update);
+    }
+    return updates;
   }
 }
 

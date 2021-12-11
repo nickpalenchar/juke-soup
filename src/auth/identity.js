@@ -15,3 +15,7 @@ export default function useUser() {
 
   return user;
 }
+
+export function getCurrentUserId() {
+  return localStorage.getItem('_id');
+}

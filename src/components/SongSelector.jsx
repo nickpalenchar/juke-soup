@@ -9,7 +9,7 @@ import {Time} from 'goodtimer';
 import ConfirmSongSelection from "./ConfirmSongSelection";
 
 
-export default function SongSelector() {
+export default function SongSelector({eventHandler = () => {}} = {}) {
 
   const [query, setQuery] = useState('');
   const [tracks, setTracks] = useState([]);
@@ -50,19 +50,26 @@ export default function SongSelector() {
         .then(userDoc => {
           if (userDoc.money < 1) {
             alert(`You're too broke! Wait a few minutes for your ${MONEY_PLURAL} to be replenished.`);
-            throw Error();
+            throw Error('Silent');
           }
           const updatedMoney = userDoc.money - 1;
-          return User.update({_id: user}, {money: updatedMoney});
+          return User.update({_id: user}, {money: updatedMoney})
+            .then(user => {
+              eventHandler('updateUser');
+              eventHandler('selectedTrack', selectedTrack);
+              return user;
+            })
         })
-        .then(res => {
-          console.log('the updated result is ', res);
+        .catch(e => {
+          if (e.message.toLowerCase() === 'silent') {
+            return e;
+          }
+          throw e;
         })
         .finally(() => {
           setSubmittingSong(false);
         })
 
-      console.log('user money?', user);
       if (user.money < 1) {
         console.log('no money!');
         return;

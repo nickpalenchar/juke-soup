@@ -2,6 +2,8 @@ import {AiOutlinePlusCircle} from 'react-icons/ai';
 import {FaMusic} from 'react-icons/fa'
 import {useState, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
+import { MONEY_PLURAL } from '../constants';
+import { startMoneyLoop, stopMoneyLoop } from '../routines/moneyReplenish';
 import Loading from "../components/Loading";
 import QuarryModel from '../models/Quarry';
 import {MobilishView} from "../components/MobilishView";
@@ -9,17 +11,25 @@ import SongQueue from "../components/SongQueue";
 import {Accordion, Card, Tabs, Tab} from "react-bootstrap";
 import QuarrySharing from "../components/QuarrySharing";
 import SongSelector from "../components/SongSelector";
+import User from "../models/User";
+import useUser from "../auth/identity";
 
 export default function Quarry() {
   const {id: quarryId} = useParams();
 
   const [quarry, setQuarry] = useState(null);
   const [errorCode, setErrorCode] = useState(null);
+  const [user, setUser] = useState(null);
+  const myId = useUser();
 
   useEffect(() => {
     if (quarry !== null) {
       return;
     }
+
+    User.findById(myId)
+      .then(setUser);
+
     QuarryModel.findById(quarryId)
       .then(quarry => {
         if (!quarry) {
@@ -27,9 +37,21 @@ export default function Quarry() {
           return setErrorCode(404);
         }
         setQuarry(quarry);
+        startMoneyLoop();
       });
 
+    return stopMoneyLoop;
   });
+
+  const songSelectorEvent = (event, data) => {
+    if (event === 'updateUser') {
+      console.log('updating.ggggg')
+      User.findById(myId)
+        .then(setUser);
+    } else if (event === 'selectedTrack') {
+      console.log('adding track', data);
+    }
+  }
 
   if (errorCode) {
     console.log(errorCode);
@@ -37,7 +59,7 @@ export default function Quarry() {
       return (<MobilishView>
         <h1>Quarry not found <code>404</code></h1>
         <p>It might have been deleted. Or we might've screwed up (probs not tbh)</p>
-        <p><a href='/'>Back to the fam</a></p>
+        <p><a href='/'>Back to the pantry</a></p>
       </MobilishView>);
     }
     return (<MobilishView>
@@ -52,7 +74,7 @@ export default function Quarry() {
   }
   return <MobilishView align='left'>
     <section>
-      <h2>{quarry.name}</h2>
+      <h2>{quarry.name} | { typeof user?.money === 'number' && `${MONEY_PLURAL}: ${user.money}`} </h2>
     </section>
     <QuarrySharing phrase={quarry.phrase}/>
     <br/>
@@ -61,7 +83,7 @@ export default function Quarry() {
         <SongQueue songs={quarry.queue}/>
       </Tab>
       <Tab eventKey="new" title={<><AiOutlinePlusCircle/> New </>}>
-        <SongSelector/>
+        <SongSelector eventHandler={songSelectorEvent}/>
       </Tab>
     </Tabs>
   </MobilishView>

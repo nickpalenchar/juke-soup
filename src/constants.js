@@ -6,7 +6,8 @@ const constants =  {
   SPOTIFY_ACCOUNTS_API: 'https://accounts.spotify.com',
   SPOTIFY_CLIENT_ID: process.env.REACT_APP_CLIENT_ID,
   MONEY_SINGULAR: 'gem',
-  MONEY_PLURAL: 'gems'
+  MONEY_PLURAL: 'gems',
+  MAX_MONEY: 20
 }
 constants.SPOTIFY_REDIRECT_URI = `${constants.BASE_URI}/callback`;
 
