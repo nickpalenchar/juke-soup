@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, getDoc, getDocFromServer, doc } from "firebase/firestore";
+import { collection, addDoc, query, where, updateDoc, getDocs, getDoc, getDocFromServer, doc } from "firebase/firestore";
 import find from 'lodash.find';
 import getDatabase from '../database/getDatabase';
 
@@ -94,9 +94,10 @@ class Model {
 
   /**
    * @param {object} queryObj - simplified AND'ed obect or sql like string
+   * @params {{document: boolean}} - if you want the actual document or snapshopt (for more firestore ops)
    * @returns {Promise<void>}
    */
-  async find(queryObj) {
+  async find(queryObj, {document = true} = {}) {
     debug.group('find');
     debug('called with query', queryObj);
     let _id;
@@ -115,20 +116,21 @@ class Model {
       debug.groupEnd();
       return undefined;
     }
+    console.log('SNAP ', snapshot);
     if (_id) {
       const doc = find(snapshot.docs, (doc) => doc.id === _id);
       debug('found doc (by id): ', doc);
       debug.groupEnd();
-      return [documentSnapshotToObject(doc)];
+      return document ? [documentSnapshotToObject(doc)] : [doc];
     }
     debug('found docs (as snapshots):', snapshot.docs);
     debug.groupEnd();
-    return snapshot.docs.map(documentSnapshotToObject);
+    return document ? snapshot.docs.map(documentSnapshotToObject) : snapshot.docs;
   }
 
-  async findOne(queryObj) {
+  async findOne(queryObj, {document = true} = {}) {
     debug.group('findOne');
-    const docs = await this.find(queryObj);
+    const docs = await this.find(queryObj, {document});
     if (!docs) {
       debug('no docs found');
       debug.groupEnd();
@@ -138,19 +140,23 @@ class Model {
     debug.groupEnd();
     return docs[0];
   }
-  async findById(id, { cache = true} = {}) {
+  async findById(id, { cache = true, document = true} = {}) {
     debug.group('findById');
     debug('using id ', id, {cache}, this._collection);
     const db = this._getdb();
     const docRef = doc(db, `/${this._collection}/${id}`);
     const snapshot = await (cache ? getDoc(docRef) : getDocFromServer(docRef));
     debug.groupEnd();
+    if (!document) {
+      debug('returning snapshot rather than document');
+      return document;
+    }
     return documentSnapshotToObject(snapshot);
   }
 
   async findOrCreate(queryObj) {
     debug.group('findOrCreate');
-    debug('called with queryObj=', queryObj);
+    debug('called with queryObj =', queryObj);
     const doc = await this.findOne(queryObj);
     if (!doc) {
       if (!queryObj._id) {
@@ -162,7 +168,22 @@ class Model {
       return doc;
     }
     debug('Found doc:', doc);
+    debug.groupEnd();
     return doc;
+  }
+
+  async update(queryObj, updateObj) {
+    debug.group('update');
+    const document = await this.findOne(queryObj);
+    if (!document) {
+      debug('Could not find doc!');
+      debug.groupEnd();
+      return null;
+    }
+    const db = this._getdb();
+    const docRef = doc(db, `/${this._collection}/${document._id}`);
+    debug.groupEnd();
+    return updateDoc(docRef, 'money', 12);
   }
 }
 

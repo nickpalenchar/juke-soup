@@ -1,8 +1,9 @@
 import spotify from '../externalApis/spotify';
-import { render } from 'react-dom';
 import {IoFlameSharp} from 'react-icons/io5';
+import useUser from '../auth/identity'
+import User from '../models/User';
+import {MONEY_PLURAL} from '../constants';
 import {FormControl, InputGroup, Button, Badge, ListGroup} from "react-bootstrap";
-import FormContext from "react-bootstrap/FormContext";
 import {useState} from "react";
 import {Time} from 'goodtimer';
 import ConfirmSongSelection from "./ConfirmSongSelection";
@@ -14,6 +15,8 @@ export default function SongSelector() {
   const [tracks, setTracks] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(null);
+  const [submittingSong, setSubmittingSong] = useState(false);
+  const user = useUser();
 
   function doSearch() {
     spotify.request('/search', {
@@ -25,6 +28,9 @@ export default function SongSelector() {
     })
       .then(res => {
         console.log(res);
+        if (!res) {
+          return;
+        }
         setTracks(res.data.tracks.items)
       })
   }
@@ -37,7 +43,31 @@ export default function SongSelector() {
   function handleConfirmation(isConfirmed) {
     setShowConfirm(false);
     console.log('was it ture?? ', isConfirmed);
+    if (isConfirmed) {
+      setSubmittingSong(true);
 
+      User.findById(user)
+        .then(userDoc => {
+          if (userDoc.money < 1) {
+            alert(`You're too broke! Wait a few minutes for your ${MONEY_PLURAL} to be replenished.`);
+            throw Error();
+          }
+          const updatedMoney = userDoc.money - 1;
+          return User.update({_id: user}, {money: updatedMoney});
+        })
+        .then(res => {
+          console.log('the updated result is ', res);
+        })
+        .finally(() => {
+          setSubmittingSong(false);
+        })
+
+      console.log('user money?', user);
+      if (user.money < 1) {
+        console.log('no money!');
+        return;
+      }
+    }
   }
 
   function renderTrack(track, key) {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { retry } from '../util/retry';
 import {SPOTIFY_ACCOUNTS_API, SPOTIFY_API, SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI} from '../constants';
 
 const ACCESS_TOKEN = 'spotifyAccessToken_DO_NOT_SHARE';
@@ -21,9 +22,9 @@ class Storage {
 
 const storage = new Storage();
 
-const spotifyAuthedAxios = axios.create()
+const spotifyAuthedAxios = axios.create();
 
-let instance = axios.create()
+let instance = axios.create();
 
 class AxiosWithSpotifyAuth {
   constructor() {
@@ -104,6 +105,8 @@ class AxiosWithSpotifyAuth {
       if (e.message === 'Request failed with status code 400') {
         alert('Please reconnect Spotify');
         window.location.href = '/spotifyConnect';
+      } else {
+        throw e;
       }
     }
   }
