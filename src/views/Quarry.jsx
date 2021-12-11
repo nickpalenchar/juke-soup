@@ -7,7 +7,6 @@ import QuarryModel from '../models/Quarry';
 import {MobilishView} from "../components/MobilishView";
 import SongQueue from "../components/SongQueue";
 import {Accordion, Card, Tabs, Tab} from "react-bootstrap";
-import {BASE_URI} from '../constants'
 import QuarrySharing from "../components/QuarrySharing";
 import SongSelector from "../components/SongSelector";
 
@@ -15,13 +14,16 @@ export default function Quarry() {
   const {id: quarryId} = useParams();
 
   const [quarry, setQuarry] = useState(null);
-  const [errorCode, setErrorCode] = useState(null)
+  const [errorCode, setErrorCode] = useState(null);
 
   useEffect(() => {
+    if (quarry !== null) {
+      return;
+    }
     QuarryModel.findById(quarryId)
       .then(quarry => {
         if (!quarry) {
-          console.log('setting error')
+          console.log('setting error');
           return setErrorCode(404);
         }
         setQuarry(quarry);

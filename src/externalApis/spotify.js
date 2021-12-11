@@ -72,8 +72,8 @@ class AxiosWithSpotifyAuth {
     try {
       res = await this.axios(...args);
     } catch (e) {
-      console.dir(e)
       if (e.response?.data.error.message === "The access token expired") {
+        console.log('access token expired, trying new token');
         await this.requestAccessTokenFromRefreshToken();
         return this.request(...args);
       }
@@ -88,17 +88,24 @@ class AxiosWithSpotifyAuth {
       refresh_token: storage.refreshToken,
       client_id: SPOTIFY_CLIENT_ID,
     });
-    const res = await axios({
-      url: `${SPOTIFY_ACCOUNTS_API}/api/token`,
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      data: params
-    });
-    storage.accessToken = res.data.access_token;
-    storage.refreshToken = res.data.refresh_token;
-    return res;
+    try {
+      const res = await axios({
+        url: `${SPOTIFY_ACCOUNTS_API}/api/token`,
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: params
+      });
+      storage.accessToken = res.data.access_token;
+      storage.refreshToken = res.data.refresh_token;
+      return res;
+    } catch(e) {
+      if (e.message === 'Request failed with status code 400') {
+        alert('Please reconnect Spotify');
+        window.location.href = '/spotifyConnect';
+      }
+    }
   }
 }
 

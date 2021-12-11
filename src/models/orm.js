@@ -2,6 +2,14 @@ import { collection, addDoc, query, where, getDocs, getDoc, getDocFromServer, do
 import find from 'lodash.find';
 import getDatabase from '../database/getDatabase';
 
+const debug = (...args) => {
+  if (localStorage.getItem('ORMDEBUG')) {
+    console.log('[ORM:DEBUG]', ...args, {stack: new Error()});
+  }
+}
+debug.group = (label) => console.group(label);
+debug.groupEnd = () => console.groupEnd();
+
 export class ORM {
 
   static _models = {}
@@ -11,6 +19,7 @@ export class ORM {
    * @param {Function} connection - the firestore connection function
    */
   static setDb(connection) {
+    debug('Setting db connection to', connection);
     ORM._dbconnection = connection;
   }
 
@@ -70,11 +79,14 @@ class Model {
   }
 
   async create(document = {}, {fetchDoc = true} = {}) {
+    debugger;
+    debug('creating document ', document);
     this._hooks.preCreate(document);
     this.validate(document);
     const db = this._getdb();
     const snapshot = await addDoc(collection(db, this._collection), document);
     if (fetchDoc) {
+      debug('fetching document');
       return this.findById(snapshot.id, {cache: false});
     }
     return snapshot;
@@ -85,47 +97,71 @@ class Model {
    * @returns {Promise<void>}
    */
   async find(queryObj) {
+    debug.group('find');
+    debug('called with query', queryObj);
     let _id;
     if (queryObj._id) {
       _id = queryObj._id;
       delete queryObj._id;
     }
     const db = this._getdb();
+    debug('using db', db);
     const ref = collection(db, this._collection);
+    debug('using collection', ref);
     const q = query(ref, ...convertObjectToWhereClauses(queryObj));
     const snapshot = await getDocs(q);
     if (!snapshot.docs?.length) {
+      debug('find: no query found');
+      debug.groupEnd();
       return undefined;
     }
     if (_id) {
       const doc = find(snapshot.docs, (doc) => doc.id === _id);
+      debug('found doc (by id): ', doc);
+      debug.groupEnd();
       return [documentSnapshotToObject(doc)];
     }
+    debug('found docs (as snapshots):', snapshot.docs);
+    debug.groupEnd();
     return snapshot.docs.map(documentSnapshotToObject);
   }
+
   async findOne(queryObj) {
+    debug.group('findOne');
     const docs = await this.find(queryObj);
     if (!docs) {
+      debug('no docs found');
+      debug.groupEnd();
       return;
     }
+    debug(`fond ${docs.length} docs, first one is `, docs[0]);
+    debug.groupEnd();
     return docs[0];
   }
-
   async findById(id, { cache = true} = {}) {
+    debug.group('findById');
+    debug('using id ', id, {cache}, this._collection);
     const db = this._getdb();
     const docRef = doc(db, `/${this._collection}/${id}`);
     const snapshot = await (cache ? getDoc(docRef) : getDocFromServer(docRef));
+    debug.groupEnd();
     return documentSnapshotToObject(snapshot);
   }
 
   async findOrCreate(queryObj) {
+    debug.group('findOrCreate');
+    debug('called with queryObj=', queryObj);
     const doc = await this.findOne(queryObj);
     if (!doc) {
       if (!queryObj._id) {
         delete queryObj._id;
       }
-      return this.create(queryObj);
+      debug('doc not found, creating.');
+      const doc = await this.create(queryObj);
+      debug.groupEnd();
+      return doc;
     }
+    debug('Found doc:', doc);
     return doc;
   }
 }
