@@ -1,6 +1,6 @@
 
 const constants =  {
-  APP_NAME: 'Music Mining',
+  APP_NAME: 'JukeSoup',
   BASE_URI: process.env.REACT_APP_BASE_URI || 'http://localhost:3000',
   SPOTIFY_API: 'https://api.spotify.com/v1',
   SPOTIFY_ACCOUNTS_API: 'https://accounts.spotify.com',
