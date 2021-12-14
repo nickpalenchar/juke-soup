@@ -30,6 +30,7 @@ jobs:
       - run: npm install -g yarn
       - run: yarn
       - run: yarn build
+      - run: git fetch origin prod
       - run: git checkout prod
       - run: rm -rf docs
       - run: mv build docs
@@ -37,4 +38,3 @@ jobs:
       - run: npm version 1.$GITHUB_RUN_NUMBER.0
       - run: git commit -m "Deploy version 1.$GITHUB_RUN_NUMBER.0"
       - run: git push origin prod
-      
