@@ -1,4 +1,3 @@
-const crypto = require("crypto");
 const uuid = require('uuid');
 
 /** Generates a unique(ish) identity of a device, used ONLY to determine the user via browser */

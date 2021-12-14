@@ -17,4 +17,6 @@ const retry = async (cb, {limit = 10, retryOn, retryInterval = 1}, _attempt = 0)
   }
 };
 
-export default {retry};
+const exports = { retry };
+
+export default exports;
