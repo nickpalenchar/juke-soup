@@ -1,11 +1,15 @@
 import {Card} from "react-bootstrap";
-import {FiMusic} from 'react-icons/fi'
+import {FiMusic} from 'react-icons/fi';
+import SongQueueListItem from './SongQueueListItem';
 
 export default function SongQueue (props) {
-  const { songs } = props;
+  const { songs, onVote } = props;
+
   if (!songs) {
     throw Error('SongQueue component must have props `songs`');
   }
+
+  const onVoteHandler = (...args) => onVote(...args);
 
   if (!songs.length) {
     return <>
@@ -14,4 +18,11 @@ export default function SongQueue (props) {
       </Card>
     </>
   }
+  return <>
+    <Card>
+      <Card.Text>
+        {songs.map(s => <SongQueueListItem votes={s.votes} track={s.track} onVote={onVoteHandler}/>)}
+      </Card.Text>
+    </Card>
+  </>
 }

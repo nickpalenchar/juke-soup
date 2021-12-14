@@ -2,6 +2,8 @@ import {AiOutlinePlusCircle} from 'react-icons/ai';
 import {FaMusic, FaTicketAlt} from 'react-icons/fa'
 import {useState, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
+import find from 'lodash.find';
+import sortBy from 'lodash.sortby';
 import { startMoneyLoop, stopMoneyLoop } from '../routines/moneyReplenish';
 import Loading from "../components/Loading";
 import QuarryModel from '../models/Quarry';
@@ -18,6 +20,7 @@ export default function Quarry() {
 
   const [quarry, setQuarry] = useState(null);
   const [errorCode, setErrorCode] = useState(null);
+  const [updating, setUpdating] = useState(false);
   const [user, setUser] = useState(null);
   const myId = useUser();
 
@@ -44,11 +47,21 @@ export default function Quarry() {
 
   const songSelectorEvent = (event, data) => {
     if (event === 'updateUser') {
-      console.log('updating.ggggg')
       User.findById(myId)
         .then(setUser);
     } else if (event === 'selectedTrack') {
       console.log('adding track', data);
+    } else if (['up', 'down'].includes(event)) {
+      setUpdating(true)
+      const songToUpdate = find(quarry.queue, (o) => o.track.id === data.track.id);
+      console.log('found in queue ', songToUpdate);
+      songToUpdate.votes += event === 'up' ? 1 : -1;
+      quarry.queue = sortBy(quarry.queue, 'votes').reverse();
+      QuarryModel.update({_id: quarry._id}, {queue: quarry.queue})
+        .then(() => setQuarry(quarry))
+        .finally(() => setUpdating(false));
+    } else if (event === 'down') {
+
     }
   }
 
@@ -79,7 +92,7 @@ export default function Quarry() {
     <br/>
     <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
       <Tab eventKey="songs" title={<><FaMusic/> Songs</>}>
-        <SongQueue songs={quarry.queue}/>
+        <SongQueue songs={quarry.queue} onVote={songSelectorEvent}/>
       </Tab>
       <Tab eventKey="new" title={<><AiOutlinePlusCircle/> New </>}>
         <SongSelector eventHandler={songSelectorEvent} soupId={quarryId}/>
