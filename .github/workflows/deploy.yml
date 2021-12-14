@@ -27,6 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - run: sudo apt update -y && sudo apt install nodejs -y
+      - run: npm version 1.$GITHUB_RUN_NUMBER.0
       - run: npm install -g yarn
       - run: yarn
       - run: yarn build
@@ -35,6 +36,5 @@ jobs:
       - run: rm -rf docs
       - run: mv build docs
       - run: git add docs
-      - run: npm version 1.$GITHUB_RUN_NUMBER.0
       - run: git commit -m "Deploy version 1.$GITHUB_RUN_NUMBER.0"
       - run: git push origin prod
