@@ -10,7 +10,7 @@ export default function QuarrySharing(props) {
       <Accordion.Header>Bring your friends here 🙋‍♀️</Accordion.Header>
       <Accordion.Body>
         Tell them to enter <code>"{phrase.replace('-', ' ')}" </code>
-        on {BASE_URI}. They can also go to <a href='#'>{`${BASE_URI}/${phrase}`}</a> directly.
+        on {BASE_URI}. They can also go to <a href={`${BASE_URI}/${phrase}`}>{`${BASE_URI}/${phrase}`}</a> directly.
       </Accordion.Body>
     </Accordion.Item>
   </Accordion>);

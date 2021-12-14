@@ -30,7 +30,7 @@ export default function Quarry() {
     }
 
     User.findById(myId)
-      .then(setUser);
+      .then((user) => setUser(user, [quarry, myId, quarryId]));
 
     QuarryModel.findById(quarryId)
       .then(quarry => {
