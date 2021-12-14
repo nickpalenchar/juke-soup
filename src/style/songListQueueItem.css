@@ -1,0 +1,18 @@
+
+.container {
+    display: flex;
+}
+
+.voteWindow {
+    max-width: 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+.trackWindow {
+    flex-grow: 5;
+}
+
+.clickable {
+    cursor: pointer;
+}
