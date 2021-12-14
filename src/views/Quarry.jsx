@@ -9,7 +9,7 @@ import Loading from "../components/Loading";
 import QuarryModel from '../models/Quarry';
 import {MobilishView} from "../components/MobilishView";
 import SongQueue from "../components/SongQueue";
-import {Accordion, Card, Tabs, Tab} from "react-bootstrap";
+import {Tabs, Tab} from "react-bootstrap";
 import QuarrySharing from "../components/QuarrySharing";
 import SongSelector from "../components/SongSelector";
 import User from "../models/User";
@@ -46,9 +46,12 @@ export default function Quarry() {
   });
 
   const songSelectorEvent = (event, data) => {
+    if (updating) {
+      return;
+    }
     if (event === 'updateUser') {
       User.findById(myId)
-        .then(setUser);
+        .then((user) => setUser(user, [quarry, myId, quarryId]));
     } else if (event === 'selectedTrack') {
       console.log('adding track', data);
     } else if (['up', 'down'].includes(event)) {
@@ -60,8 +63,6 @@ export default function Quarry() {
       QuarryModel.update({_id: quarry._id}, {queue: quarry.queue})
         .then(() => setQuarry(quarry))
         .finally(() => setUpdating(false));
-    } else if (event === 'down') {
-
     }
   }
 

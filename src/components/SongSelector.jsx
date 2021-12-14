@@ -42,8 +42,7 @@ export default function SongSelector({soupId, eventHandler = () => {}} = {}) {
 
   function handleConfirmation(isConfirmed) {
     setShowConfirm(false);
-    console.log('was it ture?? ', isConfirmed);
-    if (isConfirmed) {
+    if (isConfirmed && !submittingSong) {
       setSubmittingSong(true);
 
       User.findById(user)

@@ -1,4 +1,4 @@
-import {Badge, Figure} from "react-bootstrap";
+import {Badge} from "react-bootstrap";
 
 
 export default function TrackPreview({track}) {
@@ -10,6 +10,7 @@ export default function TrackPreview({track}) {
     <div style={{margin: '16px'}}>
         <img
             src={track.album.images[2].url}
+            alt='Track album'
           />
     </div>
     <div style={{margin: '16px'}}>

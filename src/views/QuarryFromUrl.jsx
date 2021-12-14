@@ -20,6 +20,7 @@ export default function QuarryFromUrl() {
         navigate(`/quarry/${quarry[0]._id}`);
       } else if (quarry?.length > 1 ) {
         console.log('todo') // todo
+        setQuarry(quarry);
       } else {
         navigate('/');
       }
@@ -28,5 +29,7 @@ export default function QuarryFromUrl() {
   if (quarry === null) {
     return <Loading/>;
   }
+
+  return <div>This is a list of soups (TODO)</div>
 
 }

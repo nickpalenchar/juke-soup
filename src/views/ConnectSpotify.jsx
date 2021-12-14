@@ -1,9 +1,8 @@
 import {APP_NAME} from '../constants';
 import {Button} from 'react-bootstrap';
-import {SPOTIFY_ACCOUNTS_API, SPOTIFY_CLIENT_ID, SPOTIFY_API, SPOTIFY_REDIRECT_URI} from '../constants';
+import {SPOTIFY_ACCOUNTS_API, SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI} from '../constants';
 import {useLocation, useNavigate} from 'react-router-dom';
 import pkceChallenge from 'pkce-challenge';
-import axios from "axios";
 
 import spotify from '../externalApis/spotify';
 import Loading from "../components/Loading";
