@@ -36,4 +36,5 @@ jobs:
       - run: git config --global user.name "Github Actions"
       - run: git config --global user.email "nickpal+githubactions@nickpalenchar.com"
       - run: git commit -m "Deploy version 1.$GITHUB_RUN_NUMBER.0"
+      - run: git fetch origin prod
       - run: git push origin prod
