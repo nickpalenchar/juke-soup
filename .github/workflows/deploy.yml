@@ -24,17 +24,25 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          path: main
+
+      - uses: actions/checkout@v2
+        with:
+          path: prod
+          ref: prod
 
       # Runs a single command using the runners shell
       - run: sudo apt update -y && sudo apt install nodejs -y
       - run: npm install -g yarn
+      - run: cd main
       - run: yarn
       - run: yarn build
-      - run: rm -rf docs
-      - run: mv build docs
+      - run: rm -rf ../prod/docs
+      - run: mv build ../prod/docs
+      - run: cd ../prod
       - run: git add docs
       - run: git config --global user.name "Github Actions"
       - run: git config --global user.email "nickpal+githubactions@nickpalenchar.com"
       - run: git commit -m "Deploy version 1.$GITHUB_RUN_NUMBER.0"
-      - run: git fetch origin prod
-      - run: git push origin prod
+      - run: git push
