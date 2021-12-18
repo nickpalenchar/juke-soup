@@ -5,7 +5,10 @@ const QuarrySchema = {
   name: String,
   queue: [],
   phrase: String,
-  created: Object // Date TODO date validation?
+  created: Object, // Date TODO date validation?
+  currentTrack: Object,
+  startedAt: Object, // Date
+  isPlaying: Boolean
 }
 
 const Quarry = ORM.model('Quarry', QuarrySchema);

@@ -45,6 +45,12 @@ export default function Soup() {
           return setErrorCode(404);
         }
         setQuarry(soup);
+        console.info(soup);
+        setPlayerValues({
+          isPlaying: soup.isPlaying,
+          track: soup.currentTrack,
+          updateSpotify: false
+        })
         startMoneyLoop();
       });
 
@@ -73,7 +79,10 @@ export default function Soup() {
   }
 
   const handlePlayPauseButton = () => {
-    setPlayerValues({...playerValues, isPlaying: !playerValues.isPlaying});
+    const isPlaying = !playerValues.isPlaying;
+    setPlayerValues({...playerValues, isPlaying });
+    QuarryModel.update({ _id: quarry._id }, { isPlaying })
+      .catch(console.error);
   }
 
   const onPlayerEvent = (event) => {
@@ -92,7 +101,12 @@ export default function Soup() {
         setPlayerLock(false);
         return;
       }
-      QuarryModel.update({ _id: quarry._id }, {queue: quarry.queue})
+      QuarryModel.update({ _id: quarry._id }, {
+        queue: quarry.queue,
+        currentTrack: nextTrack,
+        startedAt: new Date(),
+        isPlaying: playerValues.isPlaying
+      })
         .then(() => setQuarry(quarry))
         .then(() => {
           setPlayerValues({...playerValues, track: nextTrack, startAt: 0});
