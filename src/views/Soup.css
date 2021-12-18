@@ -1,0 +1,9 @@
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header > :nth-child(2) {
+    align-self: flex-end;
+}

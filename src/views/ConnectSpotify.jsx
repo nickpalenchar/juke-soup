@@ -48,7 +48,7 @@ export default function ConnectSpotify() {
         console.log(data);
         return spotify.axios('/me/player/currently-playing')
       })
-      .then(() => navigate('/quarry/new'))
+      .then(() => navigate('/soup/new'))
       .catch((e) => console.error(e.message))
     return <Loading/>
   }

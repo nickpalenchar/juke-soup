@@ -79,7 +79,6 @@ class Model {
   }
 
   async create(document = {}, {fetchDoc = true} = {}) {
-    debugger;
     debug('creating document ', document);
     this._hooks.preCreate(document);
     this.validate(document);

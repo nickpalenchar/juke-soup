@@ -1,4 +1,4 @@
-import {Routes, Route } from "react-router-dom";
+import {Routes, Route, Navigate } from "react-router-dom";
 import './App.css';
 import {initializeApp} from "firebase/app";
 
@@ -6,7 +6,8 @@ import SelectAQuarry from "./views/SelectAQuarry";
 import NewQuarry from "./views/NewQuarry";
 import ConnectSpotify from "./views/ConnectSpotify";
 import QuarryFromUrl from "./views/QuarryFromUrl";
-import Quarry from "./views/Quarry";
+import Soup from "./views/Soup";
+import {Nav} from "react-bootstrap";
 
 const style = {
   'display': 'flex',
@@ -31,8 +32,8 @@ function App() {
         <Route path="/" element={<SelectAQuarry/>}/>
         <Route path="/spotifyConnect" element={<ConnectSpotify/>}/>
         <Route path="/callback" element={<ConnectSpotify/>}/>
-        <Route path="/quarry/new" element={<NewQuarry/>}/>
-        <Route path="/quarry/:id" element={<Quarry/>}/>
+        <Route path="/soup/new" element={<NewQuarry/>}/>
+        <Route path="/soup/:id" element={<Soup/>}/>
         <Route path="/:phrase" element={<QuarryFromUrl/>}/>
       </Routes>
     </div>

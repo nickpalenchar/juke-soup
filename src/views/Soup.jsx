@@ -1,21 +1,25 @@
 import {AiOutlinePlusCircle} from 'react-icons/ai';
-import {FaMusic, FaTicketAlt} from 'react-icons/fa'
+import {FaMusic, FaTicketAlt, FaPlay} from 'react-icons/fa'
 import {useState, useEffect} from 'react';
+import {SpotifyPlayerContext} from "../contexts/SpotifyPlayerContext";
 import {useParams} from 'react-router-dom';
 import find from 'lodash.find';
 import sortBy from 'lodash.sortby';
-import { startMoneyLoop, stopMoneyLoop } from '../routines/moneyReplenish';
+import {startMoneyLoop, stopMoneyLoop} from '../routines/moneyReplenish';
 import Loading from "../components/Loading";
 import QuarryModel from '../models/Quarry';
 import {MobilishView} from "../components/MobilishView";
 import SongQueue from "../components/SongQueue";
-import {Tabs, Tab} from "react-bootstrap";
+import {Tabs, Tab, Button} from "react-bootstrap";
 import QuarrySharing from "../components/QuarrySharing";
 import SongSelector from "../components/SongSelector";
+import Player from "../components/Player";
 import User from "../models/User";
 import useUser from "../auth/identity";
 
-export default function Quarry() {
+import './Soup.css';
+
+export default function Soup() {
   const {id: quarryId} = useParams();
 
   const [quarry, setQuarry] = useState(null);
@@ -33,12 +37,12 @@ export default function Quarry() {
       .then((user) => setUser(user, [quarry, myId, quarryId]));
 
     QuarryModel.findById(quarryId)
-      .then(quarry => {
-        if (!quarry) {
+      .then(soup => {
+        if (!soup) {
           console.log('setting error');
           return setErrorCode(404);
         }
-        setQuarry(quarry);
+        setQuarry(soup);
         startMoneyLoop();
       });
 
@@ -85,19 +89,26 @@ export default function Quarry() {
     return <Loading/>
   }
   const userMoneyStat = <><FaTicketAlt/> {user?.money}</>;
-  return <MobilishView align='left'>
-    <section>
-      <h2>{quarry.name} </h2><h4>{ typeof user?.money === 'number' ? userMoneyStat : ' '}</h4>
-    </section>
-    <QuarrySharing phrase={quarry.phrase}/>
-    <br/>
-    <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
-      <Tab eventKey="songs" title={<><FaMusic/> Songs</>}>
-        <SongQueue songs={quarry.queue} onVote={songSelectorEvent}/>
-      </Tab>
-      <Tab eventKey="new" title={<><AiOutlinePlusCircle/> New </>}>
-        <SongSelector eventHandler={songSelectorEvent} soupId={quarryId}/>
-      </Tab>
-    </Tabs>
-  </MobilishView>
+  return <SpotifyPlayerContext.Provider value={'hello!!!'}>
+    <MobilishView align='left'>
+      <section>
+        <span className='header'>
+          <h2>{quarry.name} </h2>
+          <Button variant='success'><FaPlay/></Button>
+        </span>
+        <h4>{typeof user?.money === 'number' ? userMoneyStat : ' '}</h4>
+      </section>
+      <QuarrySharing phrase={quarry.phrase}/>
+      <br/>
+      <Player/>
+      <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
+        <Tab eventKey="songs" title={<><FaMusic/> Songs</>}>
+          <SongQueue songs={quarry.queue} onVote={songSelectorEvent}/>
+        </Tab>
+        <Tab eventKey="new" title={<><AiOutlinePlusCircle/> New </>}>
+          <SongSelector eventHandler={songSelectorEvent} soupId={quarryId}/>
+        </Tab>
+      </Tabs>
+    </MobilishView>
+  </SpotifyPlayerContext.Provider>
 }

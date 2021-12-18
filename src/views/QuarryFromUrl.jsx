@@ -17,7 +17,7 @@ export default function QuarryFromUrl() {
   Quarry.find({phrase})
     .then(quarry => {
       if (quarry?.length === 1) {
-        navigate(`/quarry/${quarry[0]._id}`);
+        navigate(`/soup/${quarry[0]._id}`);
       } else if (quarry?.length > 1 ) {
         console.log('todo') // todo
         setQuarry(quarry);

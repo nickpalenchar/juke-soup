@@ -45,7 +45,7 @@ export default function NewQuarry(props) {
     })
       .then(data => {
         console.log('new quarry', data);
-        navigate(`/quarry/${data._id}`);
+        navigate(`/soup/${data._id}`);
       })
   }
 

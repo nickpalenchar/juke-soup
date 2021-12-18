@@ -19,7 +19,7 @@ function SelectAQuarry(props) {
                    placeholder='two words (e.g. "shining-pearl")'/> | <button>Enter</button>
             <br/>
             <hr/>
-            <h3>or <button onClick={() => navigate('/quarry/new')}>create one</button></h3>
+            <h3>or <button onClick={() => navigate('/soup/new')}>create one</button></h3>
         </MobilishView>
     );
 }
