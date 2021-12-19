@@ -28,6 +28,7 @@ export default function Soup() {
   const [user, setUser] = useState(null);
   const [playerValues, setPlayerValues] = useState(null);
   const [playerLock, setPlayerLock] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('songs')
   const myId = useUser();
 
   useEffect(() => {
@@ -48,13 +49,18 @@ export default function Soup() {
         setPlayerValues({
           isPlaying: soup.isPlaying,
           track: soup.currentTrack,
-          updateSpotify: false
-        })
+          updateSpotify: true
+        });
+        if (!soup.queue.length) {
+          setSelectedTab('new');
+        }
         startMoneyLoop();
       });
 
     return stopMoneyLoop;
   });
+
+  const sortQueue = (queue) => sortBy(quarry.queue, 'votes').reverse();
 
   const songSelectorEvent = (event, data) => {
     if (updating) {
@@ -63,14 +69,15 @@ export default function Soup() {
     if (event === 'updateUser') {
       User.findById(myId)
         .then((user) => setUser(user, [quarry, myId, quarryId]));
-    } else if (event === 'selectedTrack') {
-      console.log('adding track', data);
+    } else if (event === 'updateQueue') {
+      console.log('updating main queue data', data);
+      setQuarry({...quarry, ...{queue: data}});
+      setSelectedTab('songs');
     } else if (['up', 'down'].includes(event)) {
       setUpdating(true);
       const songToUpdate = find(quarry.queue, (o) => o.track.id === data.track.id);
-      console.log('found in queue ', songToUpdate);
       songToUpdate.votes += event === 'up' ? 1 : -1;
-      quarry.queue = sortBy(quarry.queue, 'votes').reverse();
+      quarry.queue = sortQueue(quarry.queue);
       QuarryModel.update({_id: quarry._id}, {queue: quarry.queue})
         .then(() => setQuarry(quarry))
         .finally(() => setUpdating(false));
@@ -100,7 +107,7 @@ export default function Soup() {
       if (!nextTrack) {
         // TODO message display
         console.info('no next track, pausing');
-        setPlayerValues({...playerValues, isPaused: true, updateSpotify: true})
+        setPlayerValues({...playerValues, isPlaying: false, updateSpotify: true})
         setPlayerLock(false);
         console.groupEnd();
         return;
@@ -159,7 +166,7 @@ export default function Soup() {
       <QuarrySharing phrase={quarry.phrase}/>
       <br/>
       <Player eventHandler={onPlayerEvent} soupId={quarry?._id}/>
-      <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
+      <Tabs activeKey={selectedTab} onSelect={setSelectedTab} className="mb-3">
         <Tab eventKey="songs" title={<><FaMusic/> Songs</>}>
           <SongQueue songs={quarry.queue} onVote={songSelectorEvent}/>
         </Tab>

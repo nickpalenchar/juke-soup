@@ -12,7 +12,6 @@ export function startMoneyLoop() {
   const loop = async () => {
     const lastUpdate = +localStorage.getItem(LAST_UPDATE);
     const now = Date.now();
-    console.log({lastUpdate, INTERVAL, now});
     if (lastUpdate + INTERVAL < now) {
       const moneyToGive = Math.floor((now - lastUpdate) / INTERVAL) * MONEY_PER_INTERVAL;
       const _id = getCurrentUserId();
@@ -23,10 +22,6 @@ export function startMoneyLoop() {
       loopId = setTimeout(loop, INTERVAL);
     }
     else {
-      console.log('now?? ', now);
-      console.log({INTERVAL})
-      console.log('last up?? ', lastUpdate);
-      console.log('not ready for money, will update in ', lastUpdate + INTERVAL - now);
       loopId = setTimeout(loop, lastUpdate + INTERVAL - now);
       return loopId;
     }
@@ -35,7 +30,6 @@ export function startMoneyLoop() {
     console.error('startMoneyLoop - cannot start loop when already running');
     return;
   }
-  console.log('starting loop');
   return loop();
 }
 

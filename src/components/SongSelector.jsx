@@ -61,8 +61,8 @@ export default function SongSelector({soupId, eventHandler = () => {}} = {}) {
         })
         .then(() => Quarry.findById(soupId))
         .then(soup => {
-          console.log('got soup ', soup);
           const updateQueue = [{votes: 5, track: selectedTrack}, ...soup.queue];
+          eventHandler('updateQueue', updateQueue);
           return Quarry.update({_id: soup._id}, {queue: updateQueue})
         })
         .catch(e => {
