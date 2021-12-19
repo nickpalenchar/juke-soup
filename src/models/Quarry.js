@@ -8,7 +8,8 @@ const QuarrySchema = {
   created: Object, // Date TODO date validation?
   currentTrack: Object,
   startedAt: Object, // Date
-  isPlaying: Boolean
+  isPlaying: Boolean,
+  duration: Number
 }
 
 const Quarry = ORM.model('Quarry', QuarrySchema);

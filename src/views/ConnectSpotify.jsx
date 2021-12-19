@@ -1,6 +1,6 @@
 import {APP_NAME} from '../constants';
 import {Button} from 'react-bootstrap';
-import {SPOTIFY_ACCOUNTS_API, SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI} from '../constants';
+import {SPOTIFY_ACCOUNTS_API, SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI, SPOTIFY_SCOPES} from '../constants';
 import {useLocation, useNavigate} from 'react-router-dom';
 import pkceChallenge from 'pkce-challenge';
 
@@ -14,7 +14,7 @@ const { code_verifier, code_challenge } = pkceChallenge(48);
 const authParams = new URLSearchParams();
 authParams.append('client_id', SPOTIFY_CLIENT_ID);
 authParams.append('response_type', 'code');
-authParams.append('scope', 'user-read-playback-state user-modify-playback-state user-read-currently-playing');
+authParams.append('scope', SPOTIFY_SCOPES.join(' '));
 authParams.append('redirect_uri', SPOTIFY_REDIRECT_URI);
 authParams.append('code_challenge_method', 'S256');
 authParams.append('code_challenge', code_challenge);

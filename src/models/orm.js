@@ -7,8 +7,8 @@ const debug = (...args) => {
     console.log('[ORM:DEBUG]', ...args, {stack: new Error()});
   }
 }
-debug.group = (label) => console.group(label);
-debug.groupEnd = () => console.groupEnd();
+debug.group = (label) => false && console.group(label);
+debug.groupEnd = () => false && console.groupEnd();
 
 export class ORM {
 
@@ -115,7 +115,6 @@ class Model {
       debug.groupEnd();
       return undefined;
     }
-    console.log('SNAP ', snapshot);
     if (_id) {
       const doc = find(snapshot.docs, (doc) => doc.id === _id);
       debug('found doc (by id): ', doc);

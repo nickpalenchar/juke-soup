@@ -26,7 +26,7 @@ export default function Soup() {
   const [errorCode, setErrorCode] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [user, setUser] = useState(null);
-  const [playerValues, setPlayerValues] = useState({track: null, isPlaying: false, startAt: 0})
+  const [playerValues, setPlayerValues] = useState(null);
   const [playerLock, setPlayerLock] = useState(false);
   const myId = useUser();
 
@@ -45,7 +45,6 @@ export default function Soup() {
           return setErrorCode(404);
         }
         setQuarry(soup);
-        console.info(soup);
         setPlayerValues({
           isPlaying: soup.isPlaying,
           track: soup.currentTrack,
@@ -80,7 +79,7 @@ export default function Soup() {
 
   const handlePlayPauseButton = () => {
     const isPlaying = !playerValues.isPlaying;
-    setPlayerValues({...playerValues, isPlaying });
+    setPlayerValues({...playerValues, isPlaying, updateSpotify: true });
     QuarryModel.update({ _id: quarry._id }, { isPlaying })
       .catch(console.error);
   }
@@ -90,17 +89,23 @@ export default function Soup() {
 
     if (event === 'TRACK_END') {
       if (playerLock) {
+        console.info('player locked')
         return;
       }
       setPlayerLock(true);
+      console.group('onPlayerEvent:TRACK_END')
+      console.log('getting next track')
       const nextTrack = quarry.queue.pop()?.track;
       console.log('next track is ', nextTrack);
       if (!nextTrack) {
         // TODO message display
         console.info('no next track, pausing');
+        setPlayerValues({...playerValues, isPaused: true, updateSpotify: true})
         setPlayerLock(false);
+        console.groupEnd();
         return;
       }
+      console.log('SOUP; updating with next track', nextTrack);
       QuarryModel.update({ _id: quarry._id }, {
         queue: quarry.queue,
         currentTrack: nextTrack,
@@ -109,13 +114,17 @@ export default function Soup() {
       })
         .then(() => setQuarry(quarry))
         .then(() => {
+          console.log('setting player values');
           setPlayerValues({...playerValues, track: nextTrack, startAt: 0});
         })
         .catch((e) => {
           alert(e);
           setPlayerValues({...playerValues, isPlaying: false});
         })
-        .finally(() => setPlayerLock(false));
+        .finally(() => {
+          console.groupEnd();
+          setPlayerLock(false);
+        })
     }
   };
 
@@ -149,7 +158,7 @@ export default function Soup() {
       </section>
       <QuarrySharing phrase={quarry.phrase}/>
       <br/>
-      <Player eventHandler={onPlayerEvent}/>
+      <Player eventHandler={onPlayerEvent} soupId={quarry?._id}/>
       <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
         <Tab eventKey="songs" title={<><FaMusic/> Songs</>}>
           <SongQueue songs={quarry.queue} onVote={songSelectorEvent}/>
