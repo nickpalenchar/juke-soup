@@ -97,10 +97,12 @@ class AxiosWithSpotifyAuth {
       storage.refreshToken = res.data.refresh_token;
       return res;
     } catch(e) {
-      if (e.message === 'Request failed with status code 400') {
+      if (e.message === 'Request failed with status code 400' || /The access token expired/.test(e.message)) {
         alert('Please reconnect Spotify');
         window.location.href = '/spotifyConnect';
       } else {
+        console.error('HANDLE THIS IN spotify.js');
+        console.log(e);
         throw e;
       }
     }

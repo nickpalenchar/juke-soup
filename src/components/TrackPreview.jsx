@@ -2,7 +2,6 @@ import {Badge} from "react-bootstrap";
 
 
 export default function TrackPreview({track}) {
-  console.log('PREVIEW FOR TRACK', track);
   if (!track) {
     return null;
   }
