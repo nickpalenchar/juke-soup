@@ -3,7 +3,7 @@ import {TRACK_END} from "./Player";
 
 let playerCheckId;
 
-export const checkPlayerForTrackEnd = async (onEnd, trackUri) => {
+export const checkPlayerForTrackEnd = async (onEnd, onResume, trackUri) => {
   const playerState = await spotify.request('/me/player');
   const recentlyPlayed  = (await spotify.request('/me/player/recently-played', {
     params: {
@@ -12,8 +12,9 @@ export const checkPlayerForTrackEnd = async (onEnd, trackUri) => {
   }));
   const lastPlayed = recentlyPlayed.data.items[0]?.track?.uri;
   console.log('LAST PLAYED IS ', lastPlayed);
+  console.log('PLAYER STATE ', playerState.data);
   if (!playerState.data.is_playing) {
-    console.log('CALLITHG THE THE')
+    console.log('🚨 Nothing playing! Calling', onEnd.toString());
     clearInterval(playerCheckId);
     playerCheckId = null;
     onEnd();
