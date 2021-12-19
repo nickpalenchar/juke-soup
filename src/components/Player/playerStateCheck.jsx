@@ -1,5 +1,4 @@
 import spotify from "../../externalApis/spotify";
-import {TRACK_END} from "./Player";
 
 let playerCheckId;
 
