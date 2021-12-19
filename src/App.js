@@ -1,4 +1,4 @@
-import {Routes, Route, Navigate } from "react-router-dom";
+import {Routes, Route } from "react-router-dom";
 import './App.css';
 import {initializeApp} from "firebase/app";
 
@@ -7,7 +7,6 @@ import NewQuarry from "./views/NewQuarry";
 import ConnectSpotify from "./views/ConnectSpotify";
 import QuarryFromUrl from "./views/QuarryFromUrl";
 import Soup from "./views/Soup";
-import {Nav} from "react-bootstrap";
 
 const style = {
   'display': 'flex',
