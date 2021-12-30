@@ -10,7 +10,7 @@ import Loading from "../components/Loading";
 import QuarryModel from '../models/Quarry';
 import {MobilishView} from "../components/MobilishView";
 import SongQueue from "../components/SongQueue";
-import {Tabs, Tab, Button} from "react-bootstrap";
+import {Tabs, Tab, Button, OverlayTrigger, Tooltip} from "react-bootstrap";
 import QuarrySharing from "../components/QuarrySharing";
 import SongSelector from "../components/SongSelector";
 import Player from "../components/Player";
@@ -86,8 +86,8 @@ export default function Soup() {
 
   const handlePlayPauseButton = () => {
     const isPlaying = !playerValues.isPlaying;
-    setPlayerValues({...playerValues, isPlaying, updateSpotify: true });
-    QuarryModel.update({ _id: quarry._id }, { isPlaying })
+    setPlayerValues({...playerValues, isPlaying, updateSpotify: true});
+    QuarryModel.update({_id: quarry._id}, {isPlaying})
       .catch(console.error);
   }
 
@@ -96,24 +96,26 @@ export default function Soup() {
 
     if (event === 'TRACK_END') {
       if (playerLock) {
-        console.info('player locked')
+        console.info('player locked');
         return;
       }
       setPlayerLock(true);
       console.group('onPlayerEvent:TRACK_END')
-      console.log('getting next track')
+      console.log('getting next track');
       const nextTrack = quarry.queue.pop()?.track;
       console.log('next track is ', nextTrack);
       if (!nextTrack) {
         // TODO message display
         console.info('no next track, pausing');
-        setPlayerValues({...playerValues, isPlaying: false, updateSpotify: true})
+        setPlayerValues({...playerValues, isPlaying: false, updateSpotify: true});
         setPlayerLock(false);
+        QuarryModel.update({_id: quarry._id}, {isPlaying: false})
+          .catch(console.error);
         console.groupEnd();
         return;
       }
       console.log('SOUP; updating with next track', nextTrack);
-      QuarryModel.update({ _id: quarry._id }, {
+      QuarryModel.update({_id: quarry._id}, {
         queue: quarry.queue,
         currentTrack: nextTrack,
         startedAt: new Date(),
@@ -154,12 +156,21 @@ export default function Soup() {
     return <Loading/>
   }
   const userMoneyStat = <><FaTicketAlt/> {user?.money}</>;
+
+  const startButtonDisabled = !quarry.queue.length && !quarry.currentTrack;
+
   return <SpotifyPlayerContext.Provider value={playerValues}>
     <MobilishView align='left'>
       <section>
         <span className='header'>
           <h2>{quarry.name} </h2>
-          <Button variant='success' onClick={handlePlayPauseButton}><FaPlay/></Button>
+          <OverlayTrigger
+            placement='bottom'
+            delay={150}
+            overlay={(props) => <Tooltip {...props} >Add a song first</Tooltip>}
+          >
+            <Button variant='success' disabled={startButtonDisabled} onClick={handlePlayPauseButton}><FaPlay/></Button>
+          </OverlayTrigger>
         </span>
         <h4>{typeof user?.money === 'number' ? userMoneyStat : ' '}</h4>
       </section>

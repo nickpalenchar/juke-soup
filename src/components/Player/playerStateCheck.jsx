@@ -2,14 +2,18 @@ import spotify from "../../externalApis/spotify";
 
 let playerCheckId;
 
-export const checkPlayerForTrackEnd = async (onEnd, onResume, trackUri) => {
-  const playerState = await spotify.request('/me/player');
-  const recentlyPlayed  = (await spotify.request('/me/player/recently-played', {
+export const getLastTrackPlayed = async() => {
+  const recentlyPlayed = await spotify.request('/me/player/recently-played', {
     params: {
       'limit': 1
-    }
-  }));
-  const lastPlayed = recentlyPlayed.data.items[0]?.track?.uri;
+    }});
+  return recentlyPlayed.data.items[0]?.track;
+}
+
+export const checkPlayerForTrackEnd = async (onEnd, onResume, trackUri) => {
+  const playerState = await spotify.request('/me/player');
+  const recentlyPlayed  = await getLastTrackPlayed();
+  const lastPlayed = recentlyPlayed.uri;
   console.log('LAST PLAYED IS ', lastPlayed);
   console.log('PLAYER STATE ', playerState.data);
   if (!playerState.data.is_playing) {

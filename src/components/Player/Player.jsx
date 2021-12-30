@@ -8,27 +8,40 @@ import Quarry from '../../models/Quarry';
 import {
   checkPlayerForTrackEnd,
   startPlayerCheckLoop,
+  getLastTrackPlayed
   } from './playerStateCheck';
 
 export const TRACK_END = 'TRACK_END';
 export const ERROR_PLAY_FAILED = 'ERROR_PLAY_FAILED';
 
-async function playTrack(uri, {offsetMs = 0, currentUri } = {}) {
-  console.group('playTrack');
-  const playerState = await spotify.request('/me/player');
-  console.log({playerState});
-  if (playerState.data.item.uri === uri) {
-    console.log('song is already playing, not playing', playerState.data);
-    console.groupEnd();
-    return;
-  }
-  console.log('🌐 Making request to Spotify to play track');
-  const res = await spotify.request('/me/player/play', {
+
+async function _requestSpotifyPlayTrack(uri) {
+  return spotify.request('/me/player/play', {
     method: 'put',
     data: {
       uris: [uri]
     }
   });
+}
+
+async function playTrack(uri, {offsetMs = 0, currentUri } = {}) {
+  console.group('playTrack');
+  const playerState = await spotify.request('/me/player');
+  console.log({playerState});
+  if (playerState.status === 204) {
+    const lastTrack = await getLastTrackPlayed();
+    if (lastTrack.uri !== uri) {
+      console.log('▶️ Playing current track as its not the last track played already');
+      return _requestSpotifyPlayTrack(uri);
+    }
+  }
+  if (playerState.data.item.uri === uri) {
+    console.log('song is playing right now, will not re-play', playerState.data);
+    console.groupEnd();
+    return;
+  }
+  console.log('🌐 Making request to Spotify to play track');
+  const res = await _requestSpotifyPlayTrack(uri);
   console.log('🎵🎵 Response from play request', res);
   console.groupEnd();
 }
