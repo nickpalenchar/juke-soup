@@ -4,7 +4,7 @@
  */
 export function MobilishView(props) {
   const { children } = props;
-  const style = {width: '520px', midWidth: '200px', padding: '14px'};
+  const style = {width: '100vw', maxWidth: '520px', midWidth: '200px', padding: '14px'};
   if (props.align) {
     style.textAlign = props.align;
   }

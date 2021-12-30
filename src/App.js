@@ -3,7 +3,7 @@ import './App.css';
 import {initializeApp} from "firebase/app";
 
 import SelectAQuarry from "./views/SelectAQuarry";
-import NewQuarry from "./views/NewQuarry";
+import NewSoup from "./views/NewSoup";
 import ConnectSpotify from "./views/ConnectSpotify";
 import QuarryFromUrl from "./views/QuarryFromUrl";
 import Soup from "./views/Soup";
@@ -32,7 +32,7 @@ function App() {
         <Route path="/" element={<SelectAQuarry/>}/>
         <Route path="/spotifyConnect" element={<ConnectSpotify/>}/>
         <Route path="/callback" element={<ConnectSpotify/>}/>
-        <Route path="/soup/new" element={<NewQuarry/>}/>
+        <Route path="/soup/new" element={<NewSoup/>}/>
         <Route path="/soup/:id" element={<Soup/>}/>
         <Route path="/:phrase" element={<QuarryFromUrl/>}/>
       </Routes>

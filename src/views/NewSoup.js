@@ -8,7 +8,7 @@ import {MobilishView} from "../components/MobilishView";
 import twoWordPhrase from '../util/searchPhrase';
 import Quarry from "../models/Quarry";
 
-export default function NewQuarry(props) {
+export default function NewSoup(props) {
 
   const navigate = useNavigate();
   const user = useUser();
