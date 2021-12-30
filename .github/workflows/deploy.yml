@@ -30,6 +30,7 @@ jobs:
       - run: yarn build
       - run: rm -rf docs
       - run: mv build docs
+      - run: echo "jukesoup.com" > docs/CNAME
       - run: git add docs
       - run: git config --global user.name "Github Actions"
       - run: git config --global user.email "nickpal+githubactions@nickpalenchar.com"
