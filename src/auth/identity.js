@@ -4,7 +4,6 @@ import User from '../models/User';
 
 export default function useUser() {
   const [user, setUser] = useState(null);
-
   useEffect(() => {
     const _id = localStorage.getItem('_id');
     const auth = getAuth();
@@ -21,9 +20,11 @@ export default function useUser() {
         return;
       }
       User.findOrCreate({_authId: authUser.uid})
-        .then(user => {
-          localStorage.setItem('_id', user._id);
-          setUser({_id, authId: authUser.uid});
+        .then(userFromDb => {
+          localStorage.setItem('_id', userFromDb._id);
+          if (user?._id !== userFromDb._id) {
+            setUser(user);
+          }
         });
     });
 
