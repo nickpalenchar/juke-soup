@@ -15,9 +15,9 @@ import QuarrySharing from "../components/QuarrySharing";
 import SongSelector from "../components/SongSelector";
 import Player from "../components/Player";
 import User from "../models/User";
-import useUser from "../auth/identity";
 
 import './Soup.css';
+import useUser from "../auth/identity";
 
 export default function Soup() {
   const {id: quarryId} = useParams();

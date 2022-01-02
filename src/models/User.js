@@ -2,6 +2,7 @@ import { ORM } from './orm';
 import { MAX_MONEY } from '../constants';
 
 const UserSchema = {
+  _authId: String,
   money: Number,
   score: Number,
   displayName: String

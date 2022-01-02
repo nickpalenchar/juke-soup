@@ -39,7 +39,8 @@ export default function NewSoup(props) {
 
     // TODO probably re-validate user exists before creating
     Quarry.create({
-      leader: user,
+      leader: user._id,
+      _authId: user.authId,
       phrase: phrase.join('-'),
       name: quarryName
     })

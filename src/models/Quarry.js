@@ -4,6 +4,7 @@ const QuarrySchema = {
   leader: String,
   name: String,
   queue: [],
+  _authId: String,
   phrase: String,
   created: Object, // Date TODO date validation?
   currentTrack: Object,
