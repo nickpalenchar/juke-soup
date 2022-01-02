@@ -8,18 +8,22 @@ export default function useUser() {
   useEffect(() => {
     const _id = localStorage.getItem('_id');
     const auth = getAuth();
+
     signInAnonymously(auth)
       .then(() => true)
       .catch(error => {
         console.error('Could not sign in with firebase auth:\n', error.code, error.message);
       });
 
-    onAuthStateChanged(auth, (user) => {
-      console.log('user is ', user?.uid);
-      User.findOrCreate({_id})
+    onAuthStateChanged(auth, (authUser) => {
+      console.log('user is ', authUser?.uid);
+      if (!authUser?.uid) {
+        return;
+      }
+      User.findOrCreate({_authId: authUser.uid})
         .then(user => {
           localStorage.setItem('_id', user._id);
-          setUser(_id);
+          setUser({_id, authId: authUser.uid});
         });
     });
 

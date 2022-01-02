@@ -31,7 +31,6 @@ function App() {
   return (
     <div className="App" style={style}>
       {/*TODO: can we wrap elements in a userProvider context??*/}
-      <AuthUserContext.Provider value={useUser()}>
         <Routes>
           <Route path="/" element={<SelectAQuarry/>}/>
           <Route path="/spotifyConnect" element={<ConnectSpotify/>}/>
@@ -40,7 +39,6 @@ function App() {
           <Route path="/soup/:id" element={<Soup/>}/>
           <Route path="/:phrase" element={<QuarryFromUrl/>}/>
         </Routes>
-      </AuthUserContext.Provider>
     </div>
   );
 }
