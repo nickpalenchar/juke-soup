@@ -2,6 +2,7 @@ import Loading from "../components/Loading";
 import Quarry from "../models/Quarry";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import useUser from "../auth/identity";
 
 const { useParams } = require('react-router-dom');
 
@@ -12,7 +13,12 @@ export default function QuarryFromUrl() {
     navigate('/');
   }
   const [ quarry, setQuarry ] = useState(null);
+  const user = useUser();
   console.log('its ', phrase);
+
+  if (user === null) {
+    return <Loading/>;
+  }
 
   Quarry.find({phrase})
     .then(quarry => {

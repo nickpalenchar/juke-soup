@@ -7,6 +7,7 @@ import NewSoup from "./views/NewSoup";
 import ConnectSpotify from "./views/ConnectSpotify";
 import QuarryFromUrl from "./views/QuarryFromUrl";
 import Soup from "./views/Soup";
+import { RequireAuthUser } from "./components/RequireAuthUser";
 import {AuthUserContext} from "./contexts/AuthUserContext";
 import useUser from "./auth/identity";
 
@@ -30,7 +31,6 @@ function App() {
 
   return (
     <div className="App" style={style}>
-      {/*TODO: can we wrap elements in a userProvider context??*/}
         <Routes>
           <Route path="/" element={<SelectAQuarry/>}/>
           <Route path="/spotifyConnect" element={<ConnectSpotify/>}/>
