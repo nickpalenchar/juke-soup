@@ -35,7 +35,6 @@ export default function Soup() {
     if (quarry !== null) {
       return;
     }
-
     User.findById(myId)
       .then((user) => setUser(user, [quarry, myId, quarryId]));
 
@@ -164,10 +163,10 @@ export default function Soup() {
       <section>
         <span className='header'>
           <h2>{quarry.name} </h2>
-          <OverlayTrigger
+        <OverlayTrigger
             placement='bottom'
             delay={150}
-            overlay={(props) => <Tooltip {...props} >Add a song first</Tooltip>}
+            overlay={(props) => quarry.queue.length ? '' : <Tooltip {...props} >Add a song first</Tooltip>}
           >
             <Button variant='success' disabled={startButtonDisabled} onClick={handlePlayPauseButton}><FaPlay/></Button>
           </OverlayTrigger>

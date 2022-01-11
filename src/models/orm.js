@@ -139,6 +139,9 @@ class Model {
     return docs[0];
   }
   async findById(id, { cache = true, document = true} = {}) {
+    if (typeof id === 'object' && id !== null && id._id) {
+      return this.findById(id._id, { cache, document });
+    }
     debug.group('findById');
     debug('using id ', id, {cache}, this._collection);
     const db = this._getdb();

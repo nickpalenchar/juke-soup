@@ -14,7 +14,6 @@ export default function useUser() {
       });
 
     onAuthStateChanged(auth, (authUser) => {
-      console.log('user is ', authUser?.uid);
       if (!authUser?.uid) {
         return;
       }
@@ -22,13 +21,12 @@ export default function useUser() {
         .then(userFromDb => {
           localStorage.setItem('_id', userFromDb._id);
           if (user?._id !== userFromDb._id) {
-            setUser(user);
+            setUser(userFromDb);
           }
         });
     });
 
   });
-
   return user;
 }
 

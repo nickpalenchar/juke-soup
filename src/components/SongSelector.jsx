@@ -44,8 +44,8 @@ export default function SongSelector({soupId, eventHandler = () => {}} = {}) {
     setShowConfirm(false);
     if (isConfirmed && !submittingSong) {
       setSubmittingSong(true);
-
-      User.findById(user)
+      console.log('user??? ', user);
+      User.findById(user._id)
         .then(userDoc => {
           if (userDoc.money < 1) {
             alert(`You're too broke! Wait a few minutes for your ${MONEY_PLURAL} to be replenished.`);

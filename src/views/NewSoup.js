@@ -38,12 +38,14 @@ export default function NewSoup(props) {
     setSubmitting(true);
 
     // TODO probably re-validate user exists before creating
-    Quarry.create({
+    const soupDoc = {
       leader: user._id,
-      _authId: user.authId,
+      _authId: user._authId,
       phrase: phrase.join('-'),
       name: quarryName
-    })
+    }
+    console.log('creating Soup', {soupDoc, user})
+    Quarry.create(soupDoc)
       .then(data => {
         console.log('new quarry', data);
         navigate(`/soup/${data._id}`);
