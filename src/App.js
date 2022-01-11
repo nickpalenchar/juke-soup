@@ -7,9 +7,6 @@ import NewSoup from "./views/NewSoup";
 import ConnectSpotify from "./views/ConnectSpotify";
 import QuarryFromUrl from "./views/QuarryFromUrl";
 import Soup from "./views/Soup";
-import { RequireAuthUser } from "./components/RequireAuthUser";
-import {AuthUserContext} from "./contexts/AuthUserContext";
-import useUser from "./auth/identity";
 
 const style = {
   'display': 'flex',

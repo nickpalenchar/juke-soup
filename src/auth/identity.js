@@ -5,7 +5,6 @@ import User from '../models/User';
 export default function useUser() {
   const [user, setUser] = useState(null);
   useEffect(() => {
-    const _id = localStorage.getItem('_id');
     const auth = getAuth();
 
     signInAnonymously(auth)
