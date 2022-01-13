@@ -73,6 +73,7 @@ class AxiosWithSpotifyAuth {
         await this.requestAccessTokenFromRefreshToken();
         return this.request(...args);
       }
+      return e.response;
     }
     return res;
   }
@@ -107,6 +108,8 @@ class AxiosWithSpotifyAuth {
       }
     }
   }
+
+  // async getAvailableD
 }
 
 const spotify = new AxiosWithSpotifyAuth();

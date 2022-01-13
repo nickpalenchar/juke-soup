@@ -1,26 +1,27 @@
-import {AiOutlinePlusCircle} from 'react-icons/ai';
-import {FaMusic, FaTicketAlt, FaPlay} from 'react-icons/fa'
-import {useState, useEffect} from 'react';
-import {SpotifyPlayerContext} from "../contexts/SpotifyPlayerContext";
-import {useParams} from 'react-router-dom';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
+import { FaMusic, FaTicketAlt, FaPlay, FaCog } from 'react-icons/fa';
+import {CgBowl} from "react-icons/cg";
+import { useState, useEffect } from 'react';
+import { SpotifyPlayerContext } from "../contexts/SpotifyPlayerContext";
+import { useParams } from 'react-router-dom';
 import find from 'lodash.find';
 import sortBy from 'lodash.sortby';
-import {startMoneyLoop, stopMoneyLoop} from '../routines/moneyReplenish';
+import { startMoneyLoop, stopMoneyLoop } from '../routines/moneyReplenish';
 import Loading from "../components/Loading";
 import QuarryModel from '../models/Quarry';
-import {MobilishView} from "../components/MobilishView";
+import { MobilishView } from "../components/MobilishView";
 import SongQueue from "../components/SongQueue";
-import {Tabs, Tab, Button, OverlayTrigger, Tooltip} from "react-bootstrap";
+import { Tabs, Tab, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import QuarrySharing from "../components/QuarrySharing";
 import SongSelector from "../components/SongSelector";
-import Player from "../components/Player";
+import Player, { NEED_DEVICE_ID } from '../components/Player';
 import User from "../models/User";
 
 import './Soup.css';
 import useUser from "../auth/identity";
 
 export default function Soup() {
-  const {id: quarryId} = useParams();
+  const { id: quarryId } = useParams();
 
   const [quarry, setQuarry] = useState(null);
   const [errorCode, setErrorCode] = useState(null);
@@ -70,14 +71,14 @@ export default function Soup() {
         .then((user) => setUser(user, [quarry, myId, quarryId]));
     } else if (event === 'updateQueue') {
       console.log('updating main queue data', data);
-      setQuarry({...quarry, ...{queue: data}});
+      setQuarry({ ...quarry, ...{ queue: data } });
       setSelectedTab('songs');
     } else if (['up', 'down'].includes(event)) {
       setUpdating(true);
       const songToUpdate = find(quarry.queue, (o) => o.track.id === data.track.id);
       songToUpdate.votes += event === 'up' ? 1 : -1;
       quarry.queue = sortQueue(quarry.queue);
-      QuarryModel.update({_id: quarry._id}, {queue: quarry.queue})
+      QuarryModel.update({ _id: quarry._id }, { queue: quarry.queue })
         .then(() => setQuarry(quarry))
         .finally(() => setUpdating(false));
     }
@@ -85,13 +86,13 @@ export default function Soup() {
 
   const handlePlayPauseButton = () => {
     const isPlaying = !playerValues.isPlaying;
-    setPlayerValues({...playerValues, isPlaying, updateSpotify: true});
-    QuarryModel.update({_id: quarry._id}, {isPlaying})
+    setPlayerValues({ ...playerValues, isPlaying, updateSpotify: true });
+    QuarryModel.update({ _id: quarry._id }, { isPlaying })
       .catch(console.error);
   }
 
   const onPlayerEvent = (event) => {
-    console.log('# player event #');
+    console.log('# player event #', event);
 
     if (event === 'TRACK_END') {
       if (playerLock) {
@@ -106,15 +107,15 @@ export default function Soup() {
       if (!nextTrack) {
         // TODO message display
         console.info('no next track, pausing');
-        setPlayerValues({...playerValues, isPlaying: false, updateSpotify: true});
+        setPlayerValues({ ...playerValues, isPlaying: false, updateSpotify: true });
         setPlayerLock(false);
-        QuarryModel.update({_id: quarry._id}, {isPlaying: false})
+        QuarryModel.update({ _id: quarry._id }, { isPlaying: false })
           .catch(console.error);
         console.groupEnd();
         return;
       }
       console.log('SOUP; updating with next track', nextTrack);
-      QuarryModel.update({_id: quarry._id}, {
+      QuarryModel.update({ _id: quarry._id }, {
         queue: quarry.queue,
         currentTrack: nextTrack,
         startedAt: new Date(),
@@ -123,16 +124,18 @@ export default function Soup() {
         .then(() => setQuarry(quarry))
         .then(() => {
           console.log('setting player values');
-          setPlayerValues({...playerValues, track: nextTrack, startAt: 0});
+          setPlayerValues({ ...playerValues, track: nextTrack, startAt: 0 });
         })
         .catch((e) => {
           alert(e);
-          setPlayerValues({...playerValues, isPlaying: false});
+          setPlayerValues({ ...playerValues, isPlaying: false });
         })
         .finally(() => {
           console.groupEnd();
           setPlayerLock(false);
         })
+    } else if (event === NEED_DEVICE_ID) {
+      alert('select device id')
     }
   };
 
@@ -152,9 +155,9 @@ export default function Soup() {
     </MobilishView>)
   }
   if (quarry === null) {
-    return <Loading/>
+    return <Loading />
   }
-  const userMoneyStat = <><FaTicketAlt/> {user?.money}</>;
+  const userMoneyStat = <><FaTicketAlt /> {user?.money}</>;
 
   const startButtonDisabled = !quarry.queue.length && !quarry.currentTrack;
 
@@ -162,26 +165,29 @@ export default function Soup() {
     <MobilishView align='left'>
       <section>
         <span className='header'>
-          <h2>{quarry.name} </h2>
-        <OverlayTrigger
+          <h1><CgBowl/> {quarry.name} </h1>
+          <span id='player-buttons'>
+          <OverlayTrigger
             placement='bottom'
             delay={150}
-            overlay={(props) => quarry.queue.length ? '' : <Tooltip {...props} >Add a song first</Tooltip>}
+            overlay={(props) => <Tooltip {...props} >Add a song first</Tooltip>}
           >
-            <Button variant='success' disabled={startButtonDisabled} onClick={handlePlayPauseButton}><FaPlay/></Button>
+            <Button variant='success' disabled={startButtonDisabled} onClick={handlePlayPauseButton}><FaPlay /></Button>
           </OverlayTrigger>
+          <Button variant='secondary'><FaCog /></Button>
+          </span>
         </span>
         <h4>{typeof user?.money === 'number' ? userMoneyStat : ' '}</h4>
       </section>
-      <QuarrySharing phrase={quarry.phrase}/>
-      <br/>
-      <Player eventHandler={onPlayerEvent} soupId={quarry?._id}/>
+      <QuarrySharing phrase={quarry.phrase} />
+      <br />
+      <Player eventHandler={onPlayerEvent} soupId={quarry?._id} />
       <Tabs activeKey={selectedTab} onSelect={setSelectedTab} className="mb-3">
-        <Tab eventKey="songs" title={<><FaMusic/> Songs</>}>
-          <SongQueue songs={quarry.queue} onVote={songSelectorEvent}/>
+        <Tab eventKey="songs" title={<><FaMusic /> Songs</>}>
+          <SongQueue songs={quarry.queue} onVote={songSelectorEvent} />
         </Tab>
-        <Tab eventKey="new" title={<><AiOutlinePlusCircle/> New </>}>
-          <SongSelector eventHandler={songSelectorEvent} soupId={quarryId}/>
+        <Tab eventKey="new" title={<><AiOutlinePlusCircle /> New </>}>
+          <SongSelector eventHandler={songSelectorEvent} soupId={quarryId} />
         </Tab>
       </Tabs>
     </MobilishView>

@@ -21,7 +21,7 @@ export default function SongQueue (props) {
   return <>
     <Card>
       <Card.Text>
-        {songs.map(s => <SongQueueListItem votes={s.votes} track={s.track} onVote={onVoteHandler}/>)}
+        {songs.map((s, key) => <SongQueueListItem key={key} votes={s.votes} track={s.track} onVote={onVoteHandler}/>)}
       </Card.Text>
     </Card>
   </>
