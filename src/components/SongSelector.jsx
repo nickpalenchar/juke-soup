@@ -28,7 +28,8 @@ export default function SongSelector({soupId, eventHandler = () => {}} = {}) {
     })
       .then(res => {
         console.log(res);
-        if (!res) {
+        if (!res?.data?.tracks) {
+          console.error('could not get res from doSearch (line 32)', {res});
           return;
         }
         setTracks(res.data.tracks.items)

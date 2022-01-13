@@ -67,18 +67,22 @@ class AxiosWithSpotifyAuth {
     let res;
     try {
       res = await this.axios(...args);
+      console.log('>>>', res);
     } catch (e) {
       if (e.response?.data.error.message === "The access token expired") {
         console.log('access token expired, trying new token');
         await this.requestAccessTokenFromRefreshToken();
         return this.request(...args);
       }
+      if (e.response?.status === 401) {
+        await this.requestAccessTokenFromRefreshToken();
+      }
       return e.response;
     }
     return res;
   }
 
-  async requestAccessTokenFromRefreshToken() {
+  async requestAccessTokenFromRefreshToken(retries = 0) {
     console.log('starting refresh flow')
     const params = new URLSearchParams({
       grant_type: 'refresh_token',
